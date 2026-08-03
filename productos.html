@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es-UY">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Explorá los sabores clásicos, la línea sin azúcar agregada, postres y formatos de Heladería Los Trovadores."
+    >
+    <meta name="theme-color" content="#153a36">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_UY">
+    <meta property="og:title" content="Productos y sabores | Los Trovadores">
+    <meta
+      property="og:description"
+      content="Más de 50 sabores artesanales y propuestas para compartir."
+    >
+    <meta property="og:image" content="https://lostrovadores.com.uy/assets/og.png">
+    <meta property="og:image:alt" content="Los Trovadores, heladería artesanal desde 1934">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://lostrovadores.com.uy/productos.html">
+    <link rel="stylesheet" href="assets/styles.css">
+    <title>Productos y sabores | Heladería Los Trovadores</title>
+    <script src="assets/components.js" defer></script>
+    <script src="assets/products.js" defer></script>
+    <script src="assets/main.js" defer></script>
+  </head>
+  <body data-page="productos">
+    <site-header></site-header>
+
+    <main id="contenido">
+      <section
+        class="section product-catalog"
+        id="sabores"
+        aria-labelledby="sabores-titulo"
+      >
+        <div class="container product-catalog__inner">
+          <h1 class="catalog-title" id="sabores-titulo">
+            Sabores y productos
+          </h1>
+          <div
+            class="flavor-controls"
+            data-flavor-controls
+            role="tablist"
+            aria-label="Categorías de sabores y productos"
+          >
+            <button
+              class="filter-button"
+              id="categoria-clasicos"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              data-category="clasicos"
+            >Sabores clásicos</button>
+            <button
+              class="filter-button"
+              id="categoria-sin-azucar"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              tabindex="-1"
+              data-category="sin-azucar"
+            >Sabores sin azúcar</button>
+            <button
+              class="filter-button"
+              id="categoria-sin-lactosa"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              tabindex="-1"
+              data-category="sin-lactosa"
+            >Sabores sin lactosa</button>
+            <button
+              class="filter-button"
+              id="categoria-sin-gluten"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              tabindex="-1"
+              data-category="sin-gluten"
+            >Sabores sin gluten</button>
+            <button
+              class="filter-button"
+              id="categoria-barritas-veganas"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              tabindex="-1"
+              data-category="barritas-veganas"
+            >Barritas veganas</button>
+            <button
+              class="filter-button"
+              id="categoria-postres-con-azucar"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              tabindex="-1"
+              data-category="postres-con-azucar"
+            >Postres con azúcar</button>
+            <button
+              class="filter-button"
+              id="categoria-postres-sin-azucar"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              tabindex="-1"
+              data-category="postres-sin-azucar"
+            >Postres sin azúcar</button>
+            <button
+              class="filter-button"
+              id="categoria-cucuruchos"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              tabindex="-1"
+              data-category="cucuruchos"
+            >Cucuruchos</button>
+          </div>
+
+          <div class="catalog-results">
+            <h2 class="catalog-category-title" data-flavor-title>
+              Sabores clásicos
+            </h2>
+            <div
+              class="catalog-image-placeholder"
+              data-sugar-free-image
+              aria-hidden="true"
+              hidden
+            ></div>
+            <div
+              id="lista-productos"
+              class="flavor-grid"
+              data-flavor-grid
+              role="tabpanel"
+              aria-labelledby="categoria-clasicos"
+              aria-live="polite"
+            ></div>
+          </div>
+
+          <p class="form-note spacer-top">
+            Si tenés una alergia, intolerancia o necesidad alimentaria
+            específica, consultá directamente con nuestro equipo antes de
+            consumir.
+          </p>
+        </div>
+      </section>
+
+      <section class="section section--forest" aria-labelledby="idea-titulo">
+        <div class="container split">
+          <div class="stack reveal">
+            <span class="eyebrow">Laboratorio de sabores</span>
+            <h2 class="section-title" id="idea-titulo">
+              ¿Cómo sería tu sabor ideal?
+            </h2>
+            <p class="lead">
+              Imaginá una combinación nueva y compartila con nosotros.
+            </p>
+          </div>
+          <form
+            class="form reveal"
+            data-whatsapp-form
+            data-heading="Sugerencia de sabor desde la web"
+          >
+            <div class="field">
+              <label for="nombre-sabor">Nombre</label>
+              <input id="nombre-sabor" name="Nombre" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="sabor-ideal">Tu combinación ideal</label>
+              <textarea
+                id="sabor-ideal"
+                name="Sugerencia"
+                required
+                placeholder="Contanos qué ingredientes combinarías…"
+              ></textarea>
+            </div>
+            <button class="button button--light" type="submit">
+              Enviar por WhatsApp
+            </button>
+            <p class="form-note">
+              Al enviar, se abrirá WhatsApp con tu mensaje para que puedas
+              revisarlo antes de compartirlo.
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <business-cta></business-cta>
+    </main>
+
+    <site-footer></site-footer>
+  </body>
+</html>

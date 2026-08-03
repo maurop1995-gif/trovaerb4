@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es-UY">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Contactá a Heladería Los Trovadores. Consultas, eventos y venta para restaurantes y hoteles en Montevideo."
+    >
+    <meta name="theme-color" content="#153a36">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_UY">
+    <meta property="og:title" content="Contacto | Heladería Los Trovadores">
+    <meta
+      property="og:description"
+      content="Estamos en Gabriel Pereira 3202, esquina Pedro Berro, Pocitos."
+    >
+    <meta property="og:image" content="https://lostrovadores.com.uy/assets/og.png">
+    <meta property="og:image:alt" content="Los Trovadores, heladería artesanal desde 1934">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://lostrovadores.com.uy/contacto.html">
+    <link rel="stylesheet" href="assets/styles.css">
+    <title>Contacto | Heladería Los Trovadores</title>
+    <script src="assets/components.js" defer></script>
+    <script src="assets/main.js" defer></script>
+  </head>
+  <body data-page="contacto">
+    <site-header></site-header>
+
+    <main id="contenido">
+      <header
+        class="page-hero"
+        style="--page-image: url('https://framerusercontent.com/images/xLcZlOg9eMD724HGC62vazBzBk.jpg?height=1080&width=1920')"
+      >
+        <div class="container page-hero__content">
+          <span class="eyebrow">Estamos para ayudarte</span>
+          <h1>Contacto</h1>
+        </div>
+      </header>
+
+      <section class="section" aria-labelledby="contacto-titulo">
+        <div class="container split">
+          <div class="stack reveal">
+            <span class="eyebrow">Escribinos</span>
+            <h2 class="section-title" id="contacto-titulo">
+              Hablemos de tu consulta
+            </h2>
+            <p class="lead">
+              Productos, eventos, venta para restaurantes y hoteles o cualquier
+              mensaje que quieras compartir.
+            </p>
+            <address class="contact-list">
+              <p>
+                <small>Teléfono</small>
+                <a href="tel:+59827075165">(+598) 2707 51 65</a>
+              </p>
+              <p>
+                <small>Email</small>
+                <a href="mailto:info@lostrovadores.com.uy">
+                  info@lostrovadores.com.uy
+                </a>
+              </p>
+              <p>
+                <small>Dirección</small>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Helader%C3%ADa+Los+Trovadores+Gabriel+Pereira+3202+Montevideo"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Gabriel Pereira 3202, esquina Pedro Berro<br>
+                  Pocitos, Montevideo
+                </a>
+              </p>
+            </address>
+          </div>
+
+          <form
+            class="form reveal"
+            data-whatsapp-form
+            data-heading="Consulta desde la web de Los Trovadores"
+          >
+            <div class="form-row">
+              <div class="field">
+                <label for="contacto-nombre">Nombre</label>
+                <input
+                  id="contacto-nombre"
+                  name="Nombre"
+                  autocomplete="name"
+                  required
+                >
+              </div>
+              <div class="field">
+                <label for="contacto-telefono">Teléfono</label>
+                <input
+                  id="contacto-telefono"
+                  name="Teléfono"
+                  type="tel"
+                  autocomplete="tel"
+                >
+              </div>
+            </div>
+            <div class="field">
+              <label for="contacto-email">Email</label>
+              <input
+                id="contacto-email"
+                name="Email"
+                type="email"
+                autocomplete="email"
+              >
+            </div>
+            <div class="field">
+              <label for="contacto-motivo">Motivo</label>
+              <select id="contacto-motivo" name="Motivo" required>
+                <option value="">Seleccionar</option>
+                <option>Consulta general</option>
+                <option>Evento</option>
+                <option>Restaurante u hotel</option>
+                <option>Productos y sabores</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="contacto-mensaje">Mensaje</label>
+              <textarea id="contacto-mensaje" name="Mensaje" required></textarea>
+            </div>
+            <button class="button" type="submit">Enviar por WhatsApp</button>
+            <p class="form-note">
+              Al enviar, se abrirá WhatsApp. Podrás revisar el mensaje antes de
+              compartirlo.
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <section class="section section--forest" aria-labelledby="mapa-titulo">
+        <div class="container">
+          <span class="eyebrow">La esquina más helada de Pocitos</span>
+          <h2 class="section-title section-title--small" id="mapa-titulo">
+            Encontranos
+          </h2>
+          <div class="map-embed spacer-top" data-map-wrapper>
+            <button class="button" type="button" data-load-map>
+              Cargar mapa interactivo
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <site-footer></site-footer>
+  </body>
+</html>

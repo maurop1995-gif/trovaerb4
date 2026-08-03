@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es-UY">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Llevá el helado artesanal de Los Trovadores a cumpleaños, casamientos, eventos corporativos, restaurantes y hoteles."
+    >
+    <meta name="theme-color" content="#153a36">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_UY">
+    <meta property="og:title" content="Eventos y celebraciones | Los Trovadores">
+    <meta
+      property="og:description"
+      content="Una experiencia heladera artesanal para compartir en tu próximo evento."
+    >
+    <meta property="og:image" content="https://lostrovadores.com.uy/assets/og.png">
+    <meta property="og:image:alt" content="Los Trovadores, heladería artesanal desde 1934">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://lostrovadores.com.uy/eventos.html">
+    <link rel="stylesheet" href="assets/styles.css">
+    <title>Eventos y celebraciones | Heladería Los Trovadores</title>
+    <script src="assets/components.js" defer></script>
+    <script src="assets/main.js" defer></script>
+  </head>
+  <body data-page="eventos">
+    <site-header></site-header>
+
+    <main id="contenido">
+      <header
+        class="page-hero"
+        style="--page-image: url('https://framerusercontent.com/images/yM4bNvmZFimqEYYPMzW2Z4U0s9A.jpeg?height=1600&width=1600')"
+      >
+        <div class="container page-hero__content">
+          <span class="eyebrow">Catering artesanal</span>
+          <h1>Eventos y celebraciones</h1>
+        </div>
+      </header>
+
+      <section class="section">
+        <div class="container split">
+          <div class="stack reveal">
+            <span class="eyebrow">Donde estés</span>
+            <h2 class="section-title">Helado artesanal para celebrar</h2>
+            <p class="lead">
+              De cumpleaños y casamientos a encuentros corporativos: llevamos
+              el sabor de Los Trovadores a cada ocasión.
+            </p>
+            <p>
+              Coordinamos la propuesta según la cantidad de invitados, el tipo
+              de encuentro y los sabores elegidos. Escribinos para preparar una
+              opción a medida.
+            </p>
+            <div class="button-row">
+              <a class="button" href="#consulta">Consultar disponibilidad</a>
+            </div>
+          </div>
+          <figure class="media-frame history-media reveal">
+            <img
+              src="https://framerusercontent.com/images/yM4bNvmZFimqEYYPMzW2Z4U0s9A.jpeg?height=1600&width=1066"
+              alt="Servicio de helados artesanales para eventos"
+              width="1066"
+              height="1600"
+            >
+          </figure>
+        </div>
+      </section>
+
+      <section class="section section--cream" aria-labelledby="opciones-titulo">
+        <div class="container">
+          <span class="eyebrow">Propuestas a medida</span>
+          <h2 class="section-title" id="opciones-titulo">
+            Una opción para cada encuentro
+          </h2>
+          <div class="event-grid">
+            <article class="event-card reveal">
+              <span class="event-card__number">01</span>
+              <h3>Cumpleaños</h3>
+              <p>Una experiencia divertida y sabrosa para todas las edades.</p>
+            </article>
+            <article class="event-card reveal">
+              <span class="event-card__number">02</span>
+              <h3>Casamientos</h3>
+              <p>Un clásico memorable para compartir con tus invitados.</p>
+            </article>
+            <article class="event-card reveal">
+              <span class="event-card__number">03</span>
+              <h3>Empresas</h3>
+              <p>Eventos corporativos, activaciones y jornadas especiales.</p>
+            </article>
+            <article class="event-card reveal">
+              <span class="event-card__number">04</span>
+              <h3>Gastronomía</h3>
+              <p>Baldes artesanales para restaurantes, hoteles y cafeterías.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--forest" id="consulta" aria-labelledby="consulta-titulo">
+        <div class="container split">
+          <div class="stack reveal">
+            <span class="eyebrow">Contanos tu idea</span>
+            <h2 class="section-title" id="consulta-titulo">
+              Empecemos a preparar tu evento
+            </h2>
+            <p class="lead">
+              Completá los datos principales. Al enviar, podrás revisar el
+              mensaje y continuar la conversación por WhatsApp.
+            </p>
+          </div>
+          <form
+            class="form reveal"
+            data-whatsapp-form
+            data-heading="Consulta de evento desde la web"
+          >
+            <div class="form-row">
+              <div class="field">
+                <label for="evento-nombre">Nombre</label>
+                <input id="evento-nombre" name="Nombre" autocomplete="name" required>
+              </div>
+              <div class="field">
+                <label for="evento-tipo">Tipo de evento</label>
+                <select id="evento-tipo" name="Tipo de evento" required>
+                  <option value="">Elegir una opción</option>
+                  <option>Cumpleaños</option>
+                  <option>Casamiento</option>
+                  <option>Evento corporativo</option>
+                  <option>Restaurante u hotel</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="evento-fecha">Fecha estimada</label>
+                <input id="evento-fecha" name="Fecha estimada" type="date">
+              </div>
+              <div class="field">
+                <label for="evento-invitados">Cantidad de invitados</label>
+                <input
+                  id="evento-invitados"
+                  name="Invitados"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                >
+              </div>
+            </div>
+            <div class="field">
+              <label for="evento-detalle">Detalles</label>
+              <textarea
+                id="evento-detalle"
+                name="Detalles"
+                placeholder="Lugar, horario y cualquier información útil…"
+              ></textarea>
+            </div>
+            <button class="button button--light" type="submit">
+              Consultar por WhatsApp
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <site-footer></site-footer>
+  </body>
+</html>
