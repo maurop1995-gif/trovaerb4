@@ -3022,6 +3022,119 @@
   }
 }
 
+/* Ajustes responsive móviles: menú, horarios, portada y pie. */
+@layer framer-match {
+  @media (max-width: 68rem) {
+    .mobile-panel {
+      align-items: center;
+      gap: 1.25rem;
+      padding-inline: max(1.25rem, env(safe-area-inset-left));
+      text-align: center;
+    }
+
+    .mobile-links {
+      width: min(100%, 28rem);
+      margin-top: auto;
+    }
+
+    .mobile-panel a:not(.button) {
+      display: inline-flex;
+      min-height: 2.75rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-actions {
+      width: min(100%, 28rem);
+      margin-top: 0;
+      margin-bottom: auto;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgb(28 18 8 / 12%);
+    }
+  }
+
+  @media (max-width: 52rem) {
+    .visit-hours-section .visit-section,
+    .visit-hours-section .visit-section__header,
+    .visit-hours-section .visit-section__grid,
+    .visit-hours-section .visit-section__copy {
+      justify-items: center;
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    .visit-hours-section .hours-list div {
+      align-items: center;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .visit-hours-section address,
+    .visit-address {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .footer-grid > div,
+    .footer-navigation,
+    .footer-contact {
+      text-align: center;
+    }
+
+    .footer-navigation,
+    .footer-contact {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .site-footer .brand {
+      justify-content: center;
+      margin-inline: auto;
+    }
+
+    .footer-navigation .footer-links,
+    .footer-contact .footer-links {
+      width: 100%;
+      justify-items: center;
+    }
+
+    .footer-contact a {
+      overflow-wrap: anywhere;
+    }
+
+    .footer-bottom {
+      align-items: center;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    body[data-page="inicio"] .history-copy .button-row {
+      display: grid;
+      width: 100%;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.45rem;
+    }
+
+    body[data-page="inicio"] .history-copy .button {
+      min-width: 0;
+      min-height: 3rem;
+      padding-inline: 0.25rem;
+      font-size: clamp(0.82rem, 4vw, 1rem);
+      letter-spacing: 0.025em;
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 23rem) {
+    body[data-page="inicio"] .history-copy .button {
+      font-size: 0.76rem;
+    }
+  }
+}
+
 @layer utilities {
   .visually-hidden {
     position: absolute !important;
