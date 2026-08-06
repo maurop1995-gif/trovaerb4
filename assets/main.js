@@ -44,6 +44,85 @@ const setupWhatsAppForms = () => {
   });
 };
 
+/* El destinatario vive en un archivo privado de cPanel. Nunca se publica. */
+const EMAIL_ENDPOINT = "api/send-suggestion.php";
+const SPINNER_MINIMO = 1800; // ms mínimos que se ve la ruedita de carga
+
+const setupEmailForms = () => {
+  document.querySelectorAll("[data-email-form]").forEach((form) => {
+    const button = form.querySelector("[data-submit]");
+    const spinner = form.querySelector("[data-spinner]");
+    const label = form.querySelector("[data-submit-label]");
+    const errorEl = form.querySelector("[data-error]");
+    const success = form.parentElement?.querySelector("[data-success]");
+    const resetBtn = success?.querySelector("[data-reset]");
+    const labelInicial = label ? label.textContent.trim() : "Enviar";
+
+    const setCargando = (cargando) => {
+      if (button) button.disabled = cargando;
+      if (spinner) spinner.hidden = !cargando;
+      if (label) label.textContent = cargando ? "Enviando…" : labelInicial;
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (errorEl) errorEl.hidden = true;
+      if (!form.reportValidity()) return;
+
+      setCargando(true);
+      const inicio = Date.now();
+
+      const data = new FormData(form);
+      data.append(
+        "Asunto",
+        form.dataset.subject || form.dataset.heading || "Nueva consulta desde la web",
+      );
+
+      const esperarMinimo = () =>
+        new Promise((resolve) =>
+          setTimeout(resolve, Math.max(0, SPINNER_MINIMO - (Date.now() - inicio))),
+        );
+
+      try {
+        const response = await fetch(EMAIL_ENDPOINT, {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: data,
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || payload.success !== true) {
+          throw new Error(payload.message || "No se pudo enviar");
+        }
+
+        await esperarMinimo();
+        form.hidden = true;
+        if (success) {
+          success.hidden = false;
+          success.focus({ preventScroll: true });
+        }
+      } catch (error) {
+        await esperarMinimo();
+        setCargando(false);
+        if (errorEl) {
+          errorEl.textContent = window.location.hostname.endsWith("github.io")
+            ? "Esta es una vista previa. El envío se habilitará en la versión publicada en cPanel."
+            : "No pudimos enviar tu sugerencia. Revisá tu conexión y probá de nuevo.";
+          errorEl.hidden = false;
+        }
+      }
+    });
+
+    resetBtn?.addEventListener("click", () => {
+      form.reset();
+      form.hidden = false;
+      if (success) success.hidden = true;
+      if (errorEl) errorEl.hidden = true;
+      setCargando(false);
+      form.querySelector("input, textarea")?.focus();
+    });
+  });
+};
+
 const setupMap = () => {
   const trigger = document.querySelector("[data-load-map]");
   if (!trigger) return;
@@ -232,58 +311,11 @@ window.addEventListener(
   { passive: true },
 );
 
-const createGoogleReviewCard = (review) => {
-  const article = document.createElement("article");
-  article.className = "review-card";
-
-  const rating = Math.max(1, Math.min(5, Math.round(Number(review.rating) || 5)));
-  const stars = document.createElement("div");
-  stars.className = "hero__stars";
-  stars.setAttribute("aria-label", `${rating} de 5 estrellas`);
-  stars.textContent = "★".repeat(rating) + "☆".repeat(5 - rating);
-
-  const quote = document.createElement("blockquote");
-  quote.textContent = review.text?.trim()
-    ? `“${review.text.trim()}”`
-    : `Calificación de ${rating} estrellas en Google.`;
-
-  const author = document.createElement("div");
-  author.className = "review-author";
-
-  if (review.profile_photo_url) {
-    const image = document.createElement("img");
-    image.src = review.profile_photo_url;
-    image.alt = "";
-    image.width = 128;
-    image.height = 128;
-    image.loading = "lazy";
-    image.referrerPolicy = "no-referrer";
-    author.append(image);
-  } else {
-    const fallback = document.createElement("span");
-    fallback.className = "review-author__fallback";
-    fallback.setAttribute("aria-hidden", "true");
-    fallback.textContent = (review.author_name || "G").trim().charAt(0).toUpperCase();
-    author.append(fallback);
-  }
-
-  const authorCopy = document.createElement("div");
-  const cite = document.createElement("cite");
-  cite.textContent = review.author_name || "Usuario de Google";
-  const small = document.createElement("small");
-  small.textContent = review.relative_time_description
-    ? `Google · ${review.relative_time_description}`
-    : "Reseña publicada en Google";
-  authorCopy.append(cite, small);
-  author.append(authorCopy);
-
-  article.append(stars, quote, author);
-  return article;
-};
-
-const setupGoogleReviews = async () => {
-  const track = document.querySelector("[data-google-reviews]");
-  if (!track || window.location.protocol === "file:") return;
+// Único dato que se sincroniza con Google: la cantidad total de reseñas.
+// Las tarjetas del carrusel son fijas y se editan a mano en index.html.
+const setupGoogleReviewCount = async () => {
+  const countElements = document.querySelectorAll("[data-google-review-count]");
+  if (!countElements.length || window.location.protocol === "file:") return;
 
   try {
     const response = await fetch("api/google-reviews.php", {
@@ -293,62 +325,25 @@ const setupGoogleReviews = async () => {
     if (!response.ok) throw new Error("Google reviews unavailable");
 
     const data = await response.json();
-
-    const rating = Number(data.rating);
-    const ratingElement = document.querySelector("[data-google-rating]");
-    if (ratingElement && Number.isFinite(rating)) {
-      ratingElement.textContent = `${rating.toLocaleString("es-UY", {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      })} / 5`;
-    }
-    const ratingValueElements = document.querySelectorAll(
-      "[data-google-rating-value]",
-    );
-    if (ratingValueElements.length && Number.isFinite(rating)) {
-      const formattedRating = rating.toLocaleString("es-UY", {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      });
-      ratingValueElements.forEach((element) => {
-        element.textContent = formattedRating;
-      });
-    }
-
     const count = Number(data.user_ratings_total);
-    const countElements = document.querySelectorAll("[data-google-review-count]");
-    if (countElements.length && Number.isFinite(count)) {
-      const formattedCount = `${new Intl.NumberFormat("es-UY").format(count)} reseñas`;
-      countElements.forEach((element) => {
-        element.textContent = formattedCount;
-      });
-    }
+    if (!Number.isFinite(count) || count <= 0) return;
 
-    if (!Array.isArray(data.reviews) || data.reviews.length < 2) return;
-
-    const fragment = document.createDocumentFragment();
-    data.reviews.forEach((review) => fragment.append(createGoogleReviewCard(review)));
-    track.replaceChildren(fragment);
-    track.dataset.loopReady = "false";
-
-    const status = document.querySelector("[data-google-status]");
-    if (status) status.textContent = "Últimas reseñas de Google, ordenadas por fecha.";
-
-    setupReviewMarquees();
+    const formattedCount = `${new Intl.NumberFormat("es-UY").format(count)} reseñas`;
+    countElements.forEach((element) => {
+      element.textContent = formattedCount;
+    });
   } catch {
-    const status = document.querySelector("[data-google-status]");
-    if (status) {
-      status.textContent = "Reseñas destacadas de Google.";
-    }
+    // Si Google no responde, queda el número que está escrito en el HTML.
   }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   revealElements();
   setupWhatsAppForms();
+  setupEmailForms();
   setupMap();
   setupFlavors();
   setCurrentYearStory();
   setupReviewMarquees();
-  setupGoogleReviews();
+  setupGoogleReviewCount();
 });
