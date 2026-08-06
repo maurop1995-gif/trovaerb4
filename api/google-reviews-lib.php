@@ -30,7 +30,13 @@ function google_reviews_config(): array
     $placeId = getenv('GOOGLE_PLACE_ID');
     $cachePath = getenv('GOOGLE_REVIEWS_CACHE_PATH');
 
+    $apiMode = strtolower((string) ($fileConfig['api'] ?? 'auto'));
+    if (!in_array($apiMode, ['auto', 'new', 'legacy'], true)) {
+        $apiMode = 'auto';
+    }
+
     return [
+        'api' => $apiMode,
         'api_key' => is_string($apiKey) && $apiKey !== ''
             ? $apiKey
             : (string) ($fileConfig['api_key'] ?? ''),
@@ -72,22 +78,8 @@ function google_reviews_cache_is_fresh(?array $cache, int $ttl): bool
     return $updatedAt !== false && (time() - $updatedAt) < $ttl;
 }
 
-function google_reviews_fetch(array $config): array
+function google_reviews_http_get(string $url, array $headers = []): array
 {
-    if ($config['api_key'] === '') {
-        throw new RuntimeException('Falta configurar GOOGLE_PLACES_API_KEY.');
-    }
-
-    $query = http_build_query([
-        'place_id' => $config['place_id'],
-        'fields' => 'name,rating,user_ratings_total,reviews,url',
-        'reviews_sort' => 'newest',
-        'reviews_no_translations' => 'false',
-        'language' => 'es',
-        'key' => $config['api_key'],
-    ]);
-    $url = 'https://maps.googleapis.com/maps/api/place/details/json?' . $query;
-
     $curl = curl_init($url);
     if ($curl === false) {
         throw new RuntimeException('No se pudo iniciar la conexión con Google.');
@@ -99,6 +91,7 @@ function google_reviews_fetch(array $config): array
         CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_TIMEOUT => 20,
         CURLOPT_USERAGENT => 'LosTrovadoresReviews/1.0',
+        CURLOPT_HTTPHEADER => $headers,
     ]);
 
     $response = curl_exec($curl);
@@ -106,46 +99,118 @@ function google_reviews_fetch(array $config): array
     $curlError = curl_error($curl);
     curl_close($curl);
 
-    if (!is_string($response) || $response === '' || $httpStatus !== 200) {
+    if (!is_string($response) || $response === '') {
         throw new RuntimeException(
-            $curlError !== '' ? $curlError : 'Google respondió con un error.',
+            $curlError !== '' ? $curlError : 'Google no devolvió respuesta.',
         );
     }
 
-    $payload = json_decode($response, true);
+    return ['status' => $httpStatus, 'body' => $response];
+}
+
+/**
+ * Places API (New) — https://places.googleapis.com/v1/places/{PLACE_ID}
+ * Es la única disponible para proyectos de Google Cloud creados después de marzo 2025.
+ */
+function google_reviews_fetch_new(array $config): array
+{
+    $url = 'https://places.googleapis.com/v1/places/'
+        . rawurlencode($config['place_id'])
+        . '?languageCode=es&regionCode=UY';
+
+    // Field mask mínimo a propósito: pedir "reviews" mueve la llamada al SKU
+    // Enterprise + Atmosphere, que es el más caro. Sólo necesitamos el contador.
+    $response = google_reviews_http_get($url, [
+        'Content-Type: application/json',
+        'X-Goog-Api-Key: ' . $config['api_key'],
+        'X-Goog-FieldMask: id,displayName,rating,userRatingCount',
+    ]);
+
+    $payload = json_decode($response['body'], true);
+    if (!is_array($payload)) {
+        throw new RuntimeException('Respuesta inválida de Places API (New).');
+    }
+
+    if ($response['status'] !== 200 || isset($payload['error'])) {
+        $message = (string) ($payload['error']['message'] ?? 'Places API (New) respondió con un error.');
+        throw new RuntimeException($message);
+    }
+
+    return [
+        'name' => (string) ($payload['displayName']['text'] ?? 'Heladería Los Trovadores'),
+        'rating' => (float) ($payload['rating'] ?? 0),
+        'user_ratings_total' => (int) ($payload['userRatingCount'] ?? 0),
+        'source' => 'places_new',
+        'updated_at' => gmdate(DATE_ATOM),
+    ];
+}
+
+/**
+ * Places API (Legacy). Sólo funciona en proyectos de Google Cloud que ya la tenían habilitada
+ * antes de marzo 2025. Se mantiene como fallback.
+ */
+function google_reviews_fetch_legacy(array $config): array
+{
+    $query = http_build_query([
+        'place_id' => $config['place_id'],
+        'fields' => 'name,rating,user_ratings_total',
+        'language' => 'es',
+        'key' => $config['api_key'],
+    ]);
+
+    $response = google_reviews_http_get(
+        'https://maps.googleapis.com/maps/api/place/details/json?' . $query,
+    );
+
+    if ($response['status'] !== 200) {
+        throw new RuntimeException('Places API (Legacy) respondió con un error.');
+    }
+
+    $payload = json_decode($response['body'], true);
     if (!is_array($payload) || ($payload['status'] ?? '') !== 'OK') {
         $message = (string) ($payload['error_message'] ?? $payload['status'] ?? 'Respuesta inválida.');
         throw new RuntimeException($message);
     }
 
     $result = is_array($payload['result'] ?? null) ? $payload['result'] : [];
-    $reviews = [];
-    foreach (array_slice((array) ($result['reviews'] ?? []), 0, 5) as $review) {
-        if (!is_array($review)) {
-            continue;
-        }
-
-        $reviews[] = [
-            'author_name' => (string) ($review['author_name'] ?? 'Usuario de Google'),
-            'author_url' => (string) ($review['author_url'] ?? ''),
-            'profile_photo_url' => (string) ($review['profile_photo_url'] ?? ''),
-            'rating' => (int) ($review['rating'] ?? 5),
-            'relative_time_description' => (string) ($review['relative_time_description'] ?? ''),
-            'text' => trim(strip_tags((string) ($review['text'] ?? ''))),
-            'time' => (int) ($review['time'] ?? 0),
-            'translated' => (bool) ($review['translated'] ?? false),
-        ];
-    }
 
     return [
         'name' => (string) ($result['name'] ?? 'Heladería Los Trovadores'),
         'rating' => (float) ($result['rating'] ?? 0),
         'user_ratings_total' => (int) ($result['user_ratings_total'] ?? 0),
-        'reviews' => $reviews,
-        'google_url' => (string) ($result['url'] ?? ''),
-        'sort' => 'newest',
+        'source' => 'places_legacy',
         'updated_at' => gmdate(DATE_ATOM),
     ];
+}
+
+function google_reviews_fetch(array $config): array
+{
+    if ($config['api_key'] === '') {
+        throw new RuntimeException('Falta configurar GOOGLE_PLACES_API_KEY.');
+    }
+
+    $mode = $config['api'] ?? 'auto';
+
+    if ($mode === 'legacy') {
+        return google_reviews_fetch_legacy($config);
+    }
+
+    if ($mode === 'new') {
+        return google_reviews_fetch_new($config);
+    }
+
+    try {
+        return google_reviews_fetch_new($config);
+    } catch (Throwable $newApiError) {
+        try {
+            return google_reviews_fetch_legacy($config);
+        } catch (Throwable $legacyError) {
+            throw new RuntimeException(
+                'Places API (New): ' . $newApiError->getMessage()
+                . ' | Places API (Legacy): ' . $legacyError->getMessage(),
+            );
+        }
+    }
 }
 
 function google_reviews_write_cache(string $cachePath, array $payload): void
