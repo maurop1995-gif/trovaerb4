@@ -145,43 +145,89 @@
         </div>
       </section>
 
-      <section class="section section--forest" aria-labelledby="idea-titulo">
+      <section
+        class="section section--forest flavor-lab"
+        id="laboratorio"
+        aria-labelledby="idea-titulo"
+      >
         <div class="container split">
           <div class="stack reveal">
             <span class="eyebrow">Laboratorio de sabores</span>
             <h2 class="section-title" id="idea-titulo">
-              ¿Cómo sería tu sabor ideal?
+              Envianos tu sugerencia para crear tu sabor ideal
             </h2>
             <p class="lead">
-              Imaginá una combinación nueva y compartila con nosotros.
+              ¿Te imaginás un sabor nuevo? Crealo vos: contanos la combinación
+              que te gustaría probar y tocá «Enviar sugerencia». Nuestro maestro
+              heladero lee todas las ideas, y las mejores llegan a la vidriera.
             </p>
           </div>
           <form
             class="form reveal"
-            data-whatsapp-form
+            data-email-form
             data-heading="Sugerencia de sabor desde la web"
+            data-subject="Nueva sugerencia de sabor — Los Trovadores"
+            novalidate
           >
             <div class="field">
               <label for="nombre-sabor">Nombre</label>
-              <input id="nombre-sabor" name="Nombre" autocomplete="name" required>
+              <input
+                id="nombre-sabor"
+                name="Nombre"
+                autocomplete="name"
+                placeholder="Cómo te llamás"
+                required
+              >
             </div>
             <div class="field">
-              <label for="sabor-ideal">Tu combinación ideal</label>
-              <textarea
+              <label for="sabor-ideal">Tu sabor ideal</label>
+              <input
                 id="sabor-ideal"
-                name="Sugerencia"
+                name="Sabor ideal"
+                placeholder="Ej.: pistacho con dulce de leche"
                 required
-                placeholder="Contanos qué ingredientes combinarías…"
+              >
+            </div>
+            <div class="field">
+              <label for="sabor-idea">Contanos tu idea</label>
+              <textarea
+                id="sabor-idea"
+                name="Idea"
+                required
+                placeholder="Ingredientes, inspiración o combinación…"
               ></textarea>
             </div>
-            <button class="button button--light" type="submit">
-              Enviar por WhatsApp
+            <!-- Honeypot antispam: invisible para personas, visible para bots -->
+            <div class="form-honeypot" aria-hidden="true">
+              <label for="sabor-honey">No completar</label>
+              <input id="sabor-honey" name="_honey" tabindex="-1" autocomplete="off">
+            </div>
+            <button class="button button--light" type="submit" data-submit>
+              <span class="form-spinner" data-spinner hidden></span>
+              <span data-submit-label>Enviar sugerencia</span>
             </button>
             <p class="form-note">
-              Al enviar, se abrirá WhatsApp con tu mensaje para que puedas
-              revisarlo antes de compartirlo.
+              Leemos todas las sugerencias. Seguinos en Instagram para enterarte
+              cuál es el próximo sabor que sumamos.
             </p>
+            <p class="form-error" data-error role="alert" hidden></p>
           </form>
+
+          <div class="form-success" data-success tabindex="-1" role="status" aria-live="polite" hidden>
+            <span class="form-success__check" aria-hidden="true">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6 9 17l-5-5"></path>
+              </svg>
+            </span>
+            <p class="form-success__title">¡Muchas gracias por tu sugerencia!</p>
+            <p class="form-success__text">
+              Ya la recibimos y nuestro maestro heladero la va a leer con
+              atención.
+            </p>
+            <button class="form-success__again" type="button" data-reset>
+              Enviar otra sugerencia
+            </button>
+          </div>
         </div>
       </section>
 
