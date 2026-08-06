@@ -3022,6 +3022,86 @@
   }
 }
 
+/* Ajustes finales de centrado para la portada móvil. */
+@layer framer-match {
+  body[data-page="inicio"] .history-eyebrow {
+    font-size: 1.05rem;
+    letter-spacing: 0.2em;
+  }
+
+  .visit-hours-section .hours-list dd {
+    margin: 0;
+  }
+
+  @media (max-width: 52rem) {
+    body[data-page="inicio"] #historia .history-intro,
+    body[data-page="inicio"] #historia .history-intro .stack,
+    body[data-page="inicio"] #historia .history-copy {
+      width: 100%;
+      justify-items: center;
+      text-align: center;
+    }
+
+    body[data-page="inicio"] #historia .section-title {
+      max-width: 23rem;
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    body[data-page="inicio"] #historia .history-copy > p {
+      width: min(100%, 34rem);
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    body[data-page="inicio"] #historia .history-copy .button-row {
+      justify-content: center;
+    }
+
+    .visit-hours-section .visit-section__grid,
+    .visit-hours-section .visit-section__copy,
+    .visit-hours-section .hours-list,
+    .visit-hours-section .hours-list div,
+    .visit-hours-section .hours-list dt,
+    .visit-hours-section .hours-list dd {
+      width: 100%;
+      margin-inline: auto;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .visit-hours-section .hours-list {
+      place-items: stretch center;
+    }
+
+    .visit-hours-section .hours-list div {
+      grid-template-columns: minmax(0, 1fr);
+      place-items: center;
+      justify-content: stretch;
+    }
+
+    .visit-hours-section .visit-address {
+      display: grid;
+      width: 100%;
+      grid-template-columns: 1rem minmax(0, 1fr) 1rem;
+      align-items: center;
+      justify-content: stretch;
+      gap: 0.65rem;
+      text-align: center;
+    }
+
+    .visit-hours-section .visit-address::after {
+      width: 1rem;
+      content: "";
+    }
+
+    .visit-hours-section .visit-address > span:last-child {
+      grid-column: 2;
+      text-align: center;
+    }
+  }
+}
+
 /* Ajustes responsive móviles: menú, horarios, portada y pie. */
 @layer framer-match {
   @media (max-width: 68rem) {
