@@ -243,20 +243,41 @@ class SiteFooter extends HTMLElement {
           </div>
         </div>
       </footer>
-      <a
-        class="whatsapp-fab"
-        href="https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
-          "Hola, quisiera hacer una consulta.",
-        )}"
-        target="_blank"
-        rel="noopener"
-        aria-label="Consultar por WhatsApp"
-        title="WhatsApp"
-      >W</a>
+      <trovito-chat></trovito-chat>
     `;
+  }
+}
+
+class TrovitoChat extends HTMLElement {
+  connectedCallback() {
+    if (this.dataset.ready === "true") return;
+    this.dataset.ready = "true";
+    this.dataset.open = "false";
+    this.setAttribute("aria-label", "Don Trovito te responde");
+    this.innerHTML = `
+      <iframe
+        class="trovito-chat__frame"
+        src="trovito-chatbot.html?embed=1"
+        title="Don Trovito te responde"
+        loading="eager"
+      ></iframe>
+    `;
+
+    this.frame = this.querySelector("iframe");
+    this.onMessage = (event) => {
+      if (event.source !== this.frame?.contentWindow) return;
+      if (event.data?.source !== "don-trovito") return;
+      this.dataset.open = event.data.state === "open" ? "true" : "false";
+    };
+    window.addEventListener("message", this.onMessage);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener("message", this.onMessage);
   }
 }
 
 customElements.define("site-header", SiteHeader);
 customElements.define("business-cta", BusinessCta);
+customElements.define("trovito-chat", TrovitoChat);
 customElements.define("site-footer", SiteFooter);

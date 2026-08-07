@@ -51,6 +51,48 @@
   }
 }
 
+/* Don Trovito · widget global */
+trovito-chat {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 2147482900;
+  display: block;
+  width: min(320px, 100vw);
+  height: 190px;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    width 260ms cubic-bezier(.4, 0, .2, 1),
+    height 260ms cubic-bezier(.4, 0, .2, 1);
+}
+
+trovito-chat[data-open="true"] {
+  width: min(448px, 100vw);
+  height: min(708px, 100dvh);
+}
+
+.trovito-chat__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color-scheme: light dark;
+  pointer-events: auto;
+}
+
+@media (max-width: 32.5rem) {
+  trovito-chat[data-open="true"] {
+    width: 100vw;
+    height: 100dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  trovito-chat { transition: none; }
+}
+
 @layer framer-match {
   .section.visit-hours-section {
     padding-block: 2.65rem 5rem;
