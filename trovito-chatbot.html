@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Don Trovito — Asistente de Los Trovadores</title>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     DON TROVITO · Asistente conversacional · Los Trovadores
+     v2 — sistema de diseño premium, marca vectorial, cero dependencias
+     ────────────────────────────────────────────────────────────────────────
+
+     QUÉ HAY ACÁ
+     · Don Trovito vectorizado (SVG inline, 4 variantes). No pesa nada,
+       se ve nítido en cualquier pantalla y se adapta al modo oscuro.
+     · Sistema de diseño con la paleta sacada de la figura: verde salvia
+       de la galera, dorado champagne del frac, marfil de la pechera.
+     · 46 temas de conocimiento con comprensión tolerante a errores.
+     · Escalamiento a email cuando no sabe, con fallback a WhatsApp.
+     · JSON-LD FAQPage automático → Google puede mostrar tus respuestas
+       como resultado enriquecido.
+
+     CONFIGURACIÓN (1 minuto)
+     Buscá  const TROVITO  más abajo y completá:
+       · contact.whatsapp / phone / mapsUrl / instagram
+       · form.web3formsKey  → sacalo gratis en https://web3forms.com
+     Listo. No hay nada más que tocar.
+
+     INTEGRACIÓN EN FRAMER
+     Copiá los tres bloques —<style>, <div id="trovito">, <script>—
+     dentro de Site Settings › Custom Code › End of <body> tag.
+     Borrá la sección .demo de este archivo antes de pegar.
+     ════════════════════════════════════════════════════════════════════ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   ①  SISTEMA DE DISEÑO
+   Paleta muestreada de la figura de Don Trovito:
+   galera salvia · frac dorado champagne · pechera marfil · cuerpo carbón
+   ═══════════════════════════════════════════════════════════════════════ */
+#trovito, #trovito *, #trovito *::before, #trovito *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+#trovito {
+  /* — Marca — */
+  --c-forest:      #0F6B5F;   /* verde institucional */
+  --c-forest-900:  #083F38;
+  --c-forest-700:  #0B574E;
+  --c-forest-300:  #79B8AE;
+  --c-forest-100:  #E3F3EF;
+
+  --c-sage:        #B9E4C2;   /* galera */
+  --c-sage-700:    #78B58A;
+
+  --c-gold:        #D5AD4A;   /* detalle cálido de marca */
+  --c-gold-700:    #9E7720;
+  --c-gold-100:    #FBF2D8;
+
+  --c-lime:        #9BEA67;   /* acento vivo, dosificado */
+  --c-clay:        #8C3A32;   /* base de la figura → estados de error */
+
+  /* — Superficies — */
+  --s-ink:      #14211E;
+  --s-ink-70:   #53625E;
+  --s-ink-45:   #84918E;
+  --s-paper:    #FFFFFF;
+  --s-ivory:    #F6F8F7;
+  --s-sand:     #EDF2F0;
+  --s-line:     rgba(20,33,30,.075);
+  --s-line-2:   rgba(20,33,30,.12);
+  --s-gold-line: rgba(213,173,74,.25);
+
+  /* — Elevación — */
+  --e-1: 0 1px 2px rgba(10,35,30,.045), 0 3px 10px rgba(10,35,30,.04);
+  --e-2: 0 8px 30px rgba(10,35,30,.09);
+  --e-3: 0 24px 80px rgba(8,31,27,.18), 0 4px 16px rgba(8,31,27,.07);
+  --e-brand: 0 12px 30px rgba(15,107,95,.3), 0 3px 8px rgba(8,31,27,.12);
+
+  /* — Geometría — */
+  --r-xl: 24px; --r-lg: 18px; --r-md: 14px; --r-sm: 10px; --r-pill: 999px;
+
+  /* — Movimiento — */
+  --m-spring: cubic-bezier(.32, 1.42, .48, 1);
+  --m-ease:   cubic-bezier(.4, 0, .2, 1);
+  --m-exit:   cubic-bezier(.4, 0, 1, 1);
+
+  /* — Tipografía — */
+  --f-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  position: fixed; inset: 0; z-index: 2147483000;
+  font-family: var(--f-sans); font-size: 15px; line-height: 1.5;
+  color: var(--s-ink);
+  -webkit-font-smoothing: antialiased;
+  pointer-events: none;
+}
+#trovito > * { pointer-events: auto; }
+
+@media (prefers-color-scheme: dark) {
+  #trovito[data-theme="auto"] {
+    --s-ink: #EAF0EC; --s-ink-70: #A9B8B4; --s-ink-45: #7E8E8A;
+    --s-paper: #182421; --s-ivory: #101A18; --s-sand: #1F2C29;
+    --s-line: rgba(255,255,255,.08); --s-line-2: rgba(255,255,255,.16);
+    --s-gold-line: rgba(198,164,100,.28);
+    --c-forest-100: #26403D;
+    --e-3: 0 1px 3px rgba(0,0,0,.4), 0 16px 36px rgba(0,0,0,.5), 0 44px 96px rgba(0,0,0,.4);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ②  MARCA · Don Trovito
+   ═══════════════════════════════════════════════════════════════════════ */
+.dt { display: block; width: 100%; height: 100%; }
+.dt__hat {
+  transform-origin: 60px 42px;
+  transition: transform .55s var(--m-spring);
+}
+.dt__brow { transition: transform .3s var(--m-spring); transform-origin: center; }
+.dt-medallion {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(155deg, var(--s-ivory) 0%, var(--s-sand) 100%);
+  box-shadow: inset 0 0 0 1px var(--s-gold-line);
+  flex-shrink: 0;
+}
+/* Saludo de galera: al hover / apertura, Don Trovito levanta el sombrero */
+.dt-tip:hover .dt__hat,
+.dt-tip[data-greet="true"] .dt__hat { transform: translateY(-7px) rotate(-9deg); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ③  LAUNCHER
+   ═══════════════════════════════════════════════════════════════════════ */
+.tv-launcher {
+  position: fixed;
+  right: clamp(16px, 3.5vw, 28px);
+  bottom: calc(clamp(16px, 3.5vw, 28px) + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; gap: 0;
+  height: 62px; padding: 5px;
+  border: 0; border-radius: var(--r-pill);
+  background: linear-gradient(152deg, var(--c-forest) 0%, var(--c-forest-900) 100%);
+  box-shadow: var(--e-brand);
+  cursor: pointer; font-family: inherit; color: #fff;
+  transition: transform .34s var(--m-spring), box-shadow .3s var(--m-ease);
+}
+.tv-launcher::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(198,164,100,.45);
+  pointer-events: none;
+}
+.tv-launcher:hover { transform: translateY(-3px); }
+.tv-launcher:active { transform: translateY(-1px) scale(.985); }
+.tv-launcher__mark { width: 52px; height: 52px; }
+.tv-launcher__mark .dt-medallion { width: 100%; height: 100%; }
+.tv-launcher__txt {
+  display: grid; text-align: left;
+  max-width: 0; opacity: 0; overflow: hidden;
+  transition: max-width .5s var(--m-spring), opacity .28s var(--m-ease), padding .5s var(--m-spring);
+  padding: 0;
+}
+.tv-launcher[data-open-label="true"] .tv-launcher__txt { max-width: 210px; opacity: 1; padding: 0 18px 0 11px; }
+.tv-launcher__t1 {
+  font-family: var(--f-display); font-size: 19px; letter-spacing: .055em;
+  line-height: 1; white-space: nowrap;
+}
+.tv-launcher__t2 {
+  font-size: 11px; font-weight: 400; letter-spacing: .015em;
+  color: rgba(255,255,255,.66); white-space: nowrap; margin-top: 2px;
+}
+.tv-launcher__dot {
+  position: absolute; top: 4px; right: 4px;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--c-lime);
+  border: 2.5px solid var(--c-forest-900);
+  display: none;
+}
+.tv-launcher[data-unread="true"] .tv-launcher__dot { display: block; }
+#trovito[data-open="true"] .tv-launcher {
+  transform: translateY(10px) scale(.9); opacity: 0; pointer-events: none;
+  transition: all .24s var(--m-exit);
+}
+
+/* Invitación proactiva */
+.tv-nudge {
+  position: fixed;
+  right: clamp(16px, 3.5vw, 28px);
+  bottom: calc(clamp(16px, 3.5vw, 28px) + 78px + env(safe-area-inset-bottom, 0px));
+  max-width: 268px; padding: 14px 36px 14px 16px;
+  background: var(--s-paper); color: var(--s-ink);
+  border: 1px solid var(--s-line);
+  border-radius: var(--r-lg) var(--r-lg) 5px var(--r-lg);
+  box-shadow: var(--e-2);
+  font-size: 13.5px; line-height: 1.5;
+  opacity: 0; transform: translateY(10px) scale(.96);
+  pointer-events: none;
+  transition: opacity .3s var(--m-ease), transform .42s var(--m-spring);
+}
+.tv-nudge[data-show="true"] { opacity: 1; transform: none; pointer-events: auto; cursor: pointer; }
+.tv-nudge__x {
+  position: absolute; top: 6px; right: 6px;
+  width: 24px; height: 24px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--s-ink-45); cursor: pointer; font-size: 16px; line-height: 1;
+}
+.tv-nudge__x:hover { background: var(--s-sand); }
+#trovito[data-open="true"] .tv-nudge { opacity: 0; pointer-events: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ④  PANEL
+   ═══════════════════════════════════════════════════════════════════════ */
+.tv-scrim {
+  position: fixed; inset: 0;
+  background: rgba(20,32,30,.42);
+  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s var(--m-ease);
+}
+.tv-panel {
+  position: fixed;
+  right: clamp(16px, 3.5vw, 28px);
+  bottom: calc(clamp(16px, 3.5vw, 28px) + env(safe-area-inset-bottom, 0px));
+  width: min(416px, calc(100vw - 32px));
+  height: min(688px, calc(100dvh - 48px));
+  display: flex; flex-direction: column;
+  background: var(--s-ivory);
+  border: 1px solid var(--s-line);
+  border-radius: var(--r-xl);
+  box-shadow: var(--e-3);
+  overflow: hidden;
+  opacity: 0; visibility: hidden;
+  transform: translateY(22px) scale(.965);
+  transform-origin: 100% 100%;
+  pointer-events: none;
+  transition: opacity .24s var(--m-ease), transform .46s var(--m-spring), visibility .46s;
+}
+#trovito[data-open="true"] .tv-panel {
+  opacity: 1; visibility: visible; transform: none; pointer-events: auto;
+}
+
+@media (max-width: 520px) {
+  .tv-panel {
+    right: 0; left: 0; bottom: 0; width: 100%;
+    height: 100dvh; max-height: 100dvh;
+    border-radius: 0; border: 0;
+    transform: translateY(100%); transform-origin: 50% 100%;
+  }
+  #trovito[data-open="true"] .tv-scrim { opacity: 1; }
+  .tv-grip { display: block; }
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+.tv-head {
+  position: relative; flex: 0 0 auto;
+  padding: 17px 13px 17px 19px;
+  display: flex; align-items: center; gap: 13px;
+  background: linear-gradient(148deg, var(--c-forest) 0%, var(--c-forest-900) 100%);
+  color: #fff;
+}
+.tv-head::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(130% 150% at 92% -40%, rgba(198,164,100,.34), transparent 56%),
+    radial-gradient(90% 130% at -5% 130%, rgba(169,201,138,.20), transparent 58%);
+}
+.tv-head::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c-gold), transparent);
+  opacity: .55;
+}
+.tv-head > * { position: relative; }
+.tv-head__mark { width: 46px; height: 46px; flex: 0 0 46px; }
+.tv-head__mark .dt-medallion { width: 100%; height: 100%; box-shadow: inset 0 0 0 1.5px rgba(198,164,100,.6); }
+.tv-head__meta { flex: 1; min-width: 0; }
+.tv-head__name {
+  font-family: var(--f-display); font-size: 25px; letter-spacing: .055em;
+  line-height: 1.02; font-weight: 400;
+}
+.tv-head__role {
+  display: flex; align-items: center; gap: 6px; margin-top: 3px;
+  font-size: 11.5px; font-weight: 400; letter-spacing: .02em;
+  color: rgba(255,255,255,.7);
+}
+.tv-live {
+  width: 6px; height: 6px; border-radius: 50%; flex: 0 0 6px;
+  background: var(--c-lime);
+  animation: pulse 2.6s var(--m-ease) infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(180,232,90,.55); }
+  60%     { box-shadow: 0 0 0 6px rgba(180,232,90,0); }
+}
+.tv-ico {
+  width: 34px; height: 34px; flex: 0 0 34px;
+  display: grid; place-items: center;
+  border: 0; border-radius: 50%;
+  background: rgba(255,255,255,.11); color: #fff; cursor: pointer;
+  transition: background .18s var(--m-ease), transform .2s var(--m-spring);
+}
+.tv-ico:hover { background: rgba(255,255,255,.22); transform: scale(1.07); }
+.tv-ico:active { transform: scale(.93); }
+.tv-ico svg { width: 16px; height: 16px; }
+
+.tv-grip {
+  display: none; position: absolute; top: 7px; left: 50%;
+  width: 38px; height: 4px; margin-left: -19px; border-radius: 99px;
+  background: rgba(255,255,255,.34); z-index: 2;
+}
+
+/* ── Cuerpo ─────────────────────────────────────────────────────────── */
+.tv-body {
+  flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain;
+  padding: 20px 16px 8px;
+  scrollbar-width: thin; scrollbar-color: var(--s-line-2) transparent;
+}
+.tv-body::-webkit-scrollbar { width: 8px; }
+.tv-body::-webkit-scrollbar-thumb {
+  background: var(--s-line-2); border-radius: 99px;
+  border: 2.5px solid transparent; background-clip: padding-box;
+}
+
+/* ── Bienvenida editorial ───────────────────────────────────────────── */
+.tv-hero { padding: 2px 4px 14px; }
+.tv-hero__rule {
+  display: flex; align-items: center; gap: 9px; margin-bottom: 13px;
+  font-size: 10px; font-weight: 700; letter-spacing: .17em;
+  text-transform: uppercase; color: var(--c-gold-700);
+}
+.tv-hero__rule::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--s-gold-line), transparent);
+}
+.tv-hero__h {
+  font-size: 25px; font-weight: 600; letter-spacing: -.028em;
+  line-height: 1.18; margin-bottom: 8px;
+}
+.tv-hero__h em { font-style: normal; color: var(--c-forest); }
+.tv-hero__p {
+  font-size: 13.5px; line-height: 1.55; color: var(--s-ink-70);
+  max-width: 34ch; margin-bottom: 18px;
+}
+.tv-menu { display: grid; gap: 7px; }
+.tv-item {
+  position: relative; display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 13px 14px;
+  background: var(--s-paper); border: 1px solid var(--s-line);
+  border-radius: var(--r-md); box-shadow: var(--e-1);
+  cursor: pointer; text-align: left; font-family: inherit;
+  font-size: 13.6px; font-weight: 500; color: var(--s-ink);
+  transition: transform .24s var(--m-spring), box-shadow .24s var(--m-ease), border-color .24s var(--m-ease);
+}
+.tv-item::before {
+  content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 2px;
+  border-radius: 0 2px 2px 0; background: var(--c-gold);
+  opacity: 0; transform: scaleY(.4); transform-origin: center;
+  transition: opacity .24s var(--m-ease), transform .3s var(--m-spring);
+}
+.tv-item:hover { transform: translateX(3px); box-shadow: var(--e-2); border-color: var(--s-gold-line); }
+.tv-item:hover::before { opacity: 1; transform: scaleY(1); }
+.tv-item__ic {
+  width: 32px; height: 32px; flex: 0 0 32px;
+  display: grid; place-items: center; border-radius: var(--r-sm);
+  background: var(--s-sand); color: var(--c-forest);
+}
+.tv-item__ic svg { width: 17px; height: 17px; }
+.tv-item__l { flex: 1; min-width: 0; }
+.tv-item__s { display: block; font-size: 11.5px; font-weight: 400; color: var(--s-ink-45); margin-top: 1px; }
+.tv-item__a { color: var(--s-ink-45); flex: 0 0 auto; transition: transform .24s var(--m-spring); }
+.tv-item:hover .tv-item__a { transform: translateX(3px); color: var(--c-gold-700); }
+.tv-item__a svg { width: 14px; height: 14px; display: block; }
+
+/* ── Mensajes ───────────────────────────────────────────────────────── */
+.tv-m { display: flex; gap: 9px; margin-bottom: 13px; animation: rise .46s var(--m-spring) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(11px); } to { opacity: 1; transform: none; } }
+.tv-m[data-f="user"] { flex-direction: row-reverse; }
+.tv-m__av { width: 30px; height: 30px; flex: 0 0 30px; align-self: flex-end; margin-bottom: 1px; }
+.tv-m__av .dt-medallion { width: 100%; height: 100%; }
+.tv-m[data-tail="false"] .tv-m__av { visibility: hidden; }
+.tv-m__c { max-width: 85%; min-width: 0; }
+.tv-m[data-f="user"] .tv-m__c { display: flex; flex-direction: column; align-items: flex-end; }
+
+.tv-b {
+  padding: 12px 15px; border-radius: 17px;
+  font-size: 14.2px; line-height: 1.58;
+  overflow-wrap: anywhere;
+}
+.tv-m[data-f="bot"] .tv-b {
+  background: var(--s-paper); color: var(--s-ink);
+  border: 1px solid var(--s-line);
+  border-bottom-left-radius: 5px; box-shadow: var(--e-1);
+}
+.tv-m[data-f="user"] .tv-b {
+  background: linear-gradient(148deg, var(--c-forest) 0%, var(--c-forest-900) 100%);
+  color: #fff; border-bottom-right-radius: 5px; box-shadow: var(--e-1);
+}
+.tv-b strong { font-weight: 600; }
+.tv-m[data-f="bot"] .tv-b strong { color: var(--c-forest); }
+.tv-b em { font-style: normal; font-size: .89em; color: var(--s-ink-45); }
+.tv-b ul { list-style: none; margin: 9px 0 3px; }
+.tv-b li { position: relative; padding-left: 16px; margin-bottom: 5px; }
+.tv-b li::before {
+  content: ""; position: absolute; left: 2px; top: .63em;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--c-gold);
+}
+.tv-b .rule { height: 1px; border: 0; margin: 11px 0; background: var(--s-line); }
+.tv-b .kv {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 6px 0; border-bottom: 1px dashed var(--s-line);
+  font-size: 13.4px;
+}
+.tv-b .kv:last-of-type { border-bottom: 0; }
+.tv-b .kv b { font-weight: 600; color: var(--c-forest); font-variant-numeric: tabular-nums; }
+.tv-t { font-size: 10px; color: var(--s-ink-45); margin-top: 5px; padding: 0 3px; opacity: 0; transition: opacity .2s; }
+.tv-m:hover .tv-t { opacity: 1; }
+
+/* Chips */
+.tv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.tv-c {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 34px; padding: 7px 13px;
+  border: 1px solid var(--s-line-2); border-radius: var(--r-pill);
+  background: var(--s-paper); color: var(--c-forest);
+  font-family: inherit; font-size: 12.5px; font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  transition: transform .22s var(--m-spring), background .2s var(--m-ease),
+              border-color .2s var(--m-ease), color .2s var(--m-ease), box-shadow .2s var(--m-ease);
+}
+.tv-c:hover {
+  transform: translateY(-1.5px); box-shadow: var(--e-1);
+  background: var(--c-forest); border-color: var(--c-forest); color: #fff;
+}
+.tv-c[data-v="gold"] {
+  background: linear-gradient(140deg, var(--c-gold) 0%, var(--c-gold-700) 100%);
+  border-color: transparent; color: #fff; font-weight: 600;
+}
+.tv-c[data-v="gold"]:hover { filter: brightness(1.07); background: linear-gradient(140deg, var(--c-gold) 0%, var(--c-gold-700) 100%); }
+.tv-c svg { width: 14px; height: 14px; flex: 0 0 14px; }
+
+/* Feedback */
+.tv-fb { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding-left: 3px; font-size: 11px; color: var(--s-ink-45); }
+.tv-fb button {
+  width: 27px; height: 27px; display: grid; place-items: center;
+  border: 1px solid var(--s-line); border-radius: var(--r-sm);
+  background: var(--s-paper); cursor: pointer; color: var(--s-ink-45);
+  transition: all .18s var(--m-ease);
+}
+.tv-fb button:hover { color: var(--c-forest); border-color: var(--s-gold-line); transform: translateY(-1px); }
+.tv-fb button[data-on="true"] { background: var(--c-gold); border-color: var(--c-gold); color: #fff; }
+.tv-fb[data-done="true"] button { pointer-events: none; }
+.tv-fb svg { width: 13px; height: 13px; }
+
+/* Typing */
+.tv-typ {
+  display: inline-flex; align-items: center; gap: 5px; padding: 15px 17px;
+  background: var(--s-paper); border: 1px solid var(--s-line);
+  border-radius: 17px 17px 17px 5px; box-shadow: var(--e-1);
+}
+.tv-typ i {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--c-forest-300);
+  animation: blink 1.35s var(--m-ease) infinite;
+}
+.tv-typ i:nth-child(2) { animation-delay: .17s; }
+.tv-typ i:nth-child(3) { animation-delay: .34s; }
+@keyframes blink { 0%,70%,100% { opacity: .25; transform: translateY(0); } 35% { opacity: 1; transform: translateY(-3.5px); } }
+
+/* ── Formulario ─────────────────────────────────────────────────────── */
+.tv-form {
+  position: relative; background: var(--s-paper);
+  border: 1px solid var(--s-line); border-radius: var(--r-lg);
+  box-shadow: var(--e-2); padding: 18px 17px 16px; margin-bottom: 13px;
+  animation: rise .46s var(--m-spring) both;
+}
+.tv-form::before {
+  content: ""; position: absolute; left: 17px; right: 17px; top: 0; height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: linear-gradient(90deg, var(--c-gold), var(--c-sage));
+}
+.tv-form__t { font-size: 15px; font-weight: 600; letter-spacing: -.015em; margin-bottom: 4px; }
+.tv-form__s { font-size: 12.5px; line-height: 1.5; color: var(--s-ink-70); margin-bottom: 15px; }
+.tv-f { margin-bottom: 11px; }
+.tv-f label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--s-ink-45); margin-bottom: 5px; }
+.tv-f label span { text-transform: none; letter-spacing: 0; font-weight: 400; opacity: .8; }
+.tv-f input, .tv-f textarea {
+  width: 100%; font-family: inherit; font-size: 13.8px; color: var(--s-ink);
+  background: var(--s-ivory); border: 1px solid var(--s-line-2);
+  border-radius: var(--r-sm); padding: 10px 12px; outline: none;
+  transition: border-color .18s var(--m-ease), box-shadow .18s var(--m-ease), background .18s;
+}
+.tv-f textarea { resize: vertical; min-height: 80px; }
+.tv-f input:focus, .tv-f textarea:focus {
+  background: var(--s-paper); border-color: var(--c-forest-300);
+  box-shadow: 0 0 0 3px rgba(53,92,89,.13);
+}
+.tv-f[data-err="true"] input, .tv-f[data-err="true"] textarea {
+  border-color: var(--c-clay); box-shadow: 0 0 0 3px rgba(140,58,50,.11);
+}
+.tv-f__e { display: none; font-size: 11.5px; color: var(--c-clay); margin-top: 5px; }
+.tv-f[data-err="true"] .tv-f__e { display: block; }
+.tv-form__row { display: flex; gap: 8px; margin-top: 15px; }
+.tv-btn {
+  flex: 1; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 0; border-radius: var(--r-md);
+  font-family: inherit; font-size: 13.8px; font-weight: 600;
+  cursor: pointer; transition: transform .22s var(--m-spring), filter .18s var(--m-ease);
+}
+.tv-btn:hover { transform: translateY(-1.5px); filter: brightness(1.05); }
+.tv-btn:active { transform: translateY(0); }
+.tv-btn[data-v="p"] { background: linear-gradient(148deg, var(--c-forest) 0%, var(--c-forest-900) 100%); color: #fff; }
+.tv-btn[data-v="g"] { flex: 0 0 auto; padding: 0 16px; background: transparent; color: var(--s-ink-70); border: 1px solid var(--s-line-2); }
+.tv-btn[disabled] { opacity: .55; pointer-events: none; }
+.tv-spin {
+  display: none; width: 15px; height: 15px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+  animation: spin .68s linear infinite;
+}
+.tv-btn[data-loading="true"] .tv-spin { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.tv-form__n { font-size: 10.5px; line-height: 1.5; color: var(--s-ink-45); margin-top: 12px; }
+.tv-form__a {
+  display: none; font-size: 12.5px; line-height: 1.5; padding: 10px 12px;
+  border-radius: var(--r-sm); margin-top: 12px;
+  background: rgba(140,58,50,.08); color: var(--c-clay);
+  border: 1px solid rgba(140,58,50,.2);
+}
+.tv-form__a[data-show="true"] { display: block; }
+.tv-form__a a { color: inherit; font-weight: 700; }
+
+/* ── Composer ───────────────────────────────────────────────────────── */
+.tv-comp {
+  flex: 0 0 auto; position: relative;
+  padding: 11px 15px 13px;
+  padding-bottom: calc(13px + env(safe-area-inset-bottom, 0px));
+  background: var(--s-ivory); border-top: 1px solid var(--s-line);
+}
+.tv-sug { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+.tv-sug::-webkit-scrollbar { display: none; }
+.tv-sug .tv-c { white-space: nowrap; flex: 0 0 auto; }
+.tv-sug::after { content: ""; flex: 0 0 4px; }
+
+.tv-row {
+  display: flex; align-items: flex-end; gap: 8px; margin-top: 9px;
+  background: var(--s-paper); border: 1px solid var(--s-line-2);
+  border-radius: 23px; padding: 5px 5px 5px 16px;
+  transition: border-color .18s var(--m-ease), box-shadow .18s var(--m-ease);
+}
+.tv-row:focus-within { border-color: var(--c-forest-300); box-shadow: 0 0 0 3px rgba(53,92,89,.12); }
+.tv-in {
+  flex: 1; border: 0; outline: none; resize: none; background: transparent;
+  font-family: inherit; font-size: 14px; line-height: 1.45; color: var(--s-ink);
+  max-height: 112px; padding: 9px 0;
+}
+.tv-in::placeholder { color: var(--s-ink-45); }
+.tv-go {
+  width: 38px; height: 38px; flex: 0 0 38px;
+  display: grid; place-items: center; border: 0; border-radius: 50%;
+  background: linear-gradient(148deg, var(--c-forest) 0%, var(--c-forest-900) 100%);
+  color: #fff; cursor: pointer;
+  transition: transform .26s var(--m-spring), opacity .2s var(--m-ease);
+}
+.tv-go:hover { transform: scale(1.08); }
+.tv-go:active { transform: scale(.92); }
+.tv-go[disabled] { opacity: .32; pointer-events: none; }
+.tv-go svg { width: 17px; height: 17px; }
+
+.tv-foot {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 10px; font-size: 10px; letter-spacing: .04em;
+  color: var(--s-ink-45); text-transform: uppercase; font-weight: 500;
+}
+.tv-foot svg { width: 12px; height: 12px; opacity: .7; }
+
+/* ── A11y ───────────────────────────────────────────────────────────── */
+#trovito :focus-visible { outline: 2px solid var(--c-gold-700); outline-offset: 2px; border-radius: 4px; }
+.sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@media (prefers-reduced-motion: reduce) {
+  #trovito *, #trovito *::before, #trovito *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+@media (max-width: 520px) {
+  .tv-c, .tv-item, .tv-ico { min-height: 44px; }
+  .tv-ico { width: 40px; height: 40px; flex-basis: 40px; }
+  .tv-hero__h { font-size: 23px; }
+}
+
+/* ── UX v3 · más aire, menos repetición y controles más claros ───── */
+.tv-panel {
+  width: min(432px, calc(100vw - 32px));
+  height: min(660px, calc(100dvh - 32px));
+}
+.tv-head { padding: 15px 12px 15px 17px; }
+.tv-head__mark { width: 44px; height: 44px; flex-basis: 44px; }
+.tv-head__name { font-size: 24px; }
+.tv-head__role { font-size: 11px; }
+.tv-head__role strong { color: #fff; font-weight: 600; }
+.tv-ico { position: relative; }
+.tv-ico[data-confirm="true"] {
+  width: auto; flex-basis: auto; padding: 0 11px;
+  border-radius: var(--r-pill); background: rgba(255,255,255,.2);
+}
+.tv-ico[data-confirm="true"] svg { display: none; }
+.tv-ico__confirm { display: none; font: 600 11px/1 var(--f-sans); white-space: nowrap; }
+.tv-ico[data-confirm="true"] .tv-ico__confirm { display: block; }
+
+.tv-body { padding: 18px 16px 12px; }
+.tv-hero { padding: 0 3px 10px; }
+.tv-hero__rule { margin-bottom: 9px; }
+.tv-hero__h { font-size: 24px; margin-bottom: 6px; }
+.tv-hero__p { margin-bottom: 14px; max-width: 37ch; }
+.tv-menu { grid-template-columns: 1fr 1fr; gap: 8px; }
+.tv-item { align-items: flex-start; min-height: 82px; padding: 12px; gap: 9px; }
+.tv-item__ic { width: 30px; height: 30px; flex-basis: 30px; }
+.tv-item__a { display: none; }
+.tv-item__s { line-height: 1.35; margin-top: 3px; }
+
+.tv-comp { padding-top: 10px; }
+.tv-sug-wrap { position: relative; }
+.tv-sug-wrap::after {
+  content: ""; position: absolute; top: 0; right: 0; bottom: 2px; width: 28px;
+  pointer-events: none; background: linear-gradient(90deg, transparent, var(--s-ivory));
+}
+.tv-sug-label {
+  display: block; margin: 0 0 6px 2px; font-size: 10.5px;
+  font-weight: 600; color: var(--s-ink-45); letter-spacing: .02em;
+}
+.tv-comp[data-welcome="true"] .tv-sug-wrap { display: none; }
+.tv-comp[data-welcome="true"] .tv-row { margin-top: 0; }
+.tv-row { border-radius: 18px; padding-left: 14px; }
+.tv-in { min-height: 42px; padding: 10px 0; }
+.tv-foot { margin-top: 8px; letter-spacing: 0; text-transform: none; }
+.tv-foot__desktop { display: inline; }
+
+.tv-nudge { padding: 0; overflow: hidden; }
+.tv-nudge__body {
+  width: 100%; padding: 14px 38px 14px 16px; border: 0; background: transparent;
+  color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+
+@media (max-height: 680px) and (min-width: 521px) {
+  .tv-panel { height: calc(100dvh - 20px); bottom: 10px; }
+  .tv-body { padding-top: 12px; }
+  .tv-head { padding-top: 11px; padding-bottom: 11px; }
+  .tv-hero__p { display: none; }
+  .tv-item { min-height: 70px; padding: 9px 11px; }
+  .tv-foot { display: none; }
+}
+
+@media (max-width: 520px) {
+  .tv-panel { height: 100dvh; max-height: 100dvh; }
+  .tv-head {
+    padding: calc(18px + env(safe-area-inset-top, 0px)) 10px 13px 15px;
+  }
+  .tv-head__name { font-size: 22px; }
+  .tv-head__mark { width: 42px; height: 42px; flex-basis: 42px; }
+  .tv-body { padding: 16px 13px 10px; }
+  .tv-menu { grid-template-columns: 1fr; }
+  .tv-item { min-height: 68px; align-items: center; }
+  .tv-item__a { display: block; }
+  .tv-comp { padding: 9px 12px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .tv-foot__desktop { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   UX v4 · lenguaje visual de producto digital contemporáneo
+   Superficies limpias, jerarquía funcional y menos decoración.
+   ═══════════════════════════════════════════════════════════════════════ */
+.tv-panel {
+  width: min(420px, calc(100vw - 28px));
+  height: min(680px, calc(100dvh - 28px));
+  background: var(--s-paper);
+  border: 1px solid var(--s-line-2);
+  border-radius: 24px;
+  box-shadow: var(--e-3);
+}
+
+.tv-head {
+  min-height: 72px;
+  padding: 13px 12px 13px 15px;
+  gap: 11px;
+  background: var(--s-paper);
+  background: color-mix(in srgb, var(--s-paper) 94%, var(--c-forest-100));
+  color: var(--s-ink);
+  border-bottom: 1px solid var(--s-line);
+}
+.tv-head::before,
+.tv-head::after { display: none; }
+.tv-head__mark { width: 42px; height: 42px; flex-basis: 42px; }
+.tv-head__mark .dt-medallion {
+  background: var(--c-forest-100);
+  box-shadow: inset 0 0 0 1px rgba(15,107,95,.12);
+}
+.tv-head__name {
+  display: block;
+  font-family: var(--f-sans);
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+}
+.tv-head__role {
+  margin-top: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--s-ink-70);
+}
+.tv-live { width: 7px; height: 7px; flex-basis: 7px; background: #21C77A; }
+.tv-ico {
+  width: 36px; height: 36px; flex-basis: 36px;
+  background: var(--s-ivory);
+  color: var(--s-ink-70);
+  border: 1px solid var(--s-line);
+}
+.tv-ico:hover { background: var(--s-sand); color: var(--s-ink); transform: none; }
+.tv-ico:active { transform: scale(.96); }
+.tv-ico[data-confirm="true"] {
+  background: var(--s-ink); color: var(--s-paper); border-color: transparent;
+}
+
+.tv-body {
+  padding: 22px 18px 14px;
+  background:
+    radial-gradient(120% 45% at 0 -8%, rgba(15,107,95,.09), transparent 55%),
+    var(--s-ivory);
+}
+.tv-hero { padding: 2px 2px 14px; }
+.tv-hero__rule {
+  display: inline-flex;
+  width: max-content;
+  margin-bottom: 14px;
+  padding: 5px 9px;
+  border-radius: var(--r-pill);
+  background: var(--c-forest-100);
+  color: var(--c-forest-700);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.tv-hero__rule::before {
+  content: "";
+  width: 6px; height: 6px; border-radius: 50%;
+  margin: auto 7px auto 0;
+  background: #21C77A;
+  box-shadow: 0 0 0 3px rgba(33,199,122,.12);
+}
+.tv-hero__rule::after { display: none; }
+.tv-hero__h {
+  max-width: 12ch;
+  margin-bottom: 9px;
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.045em;
+}
+.tv-hero__h em { color: var(--c-forest); }
+.tv-hero__p {
+  max-width: 39ch;
+  margin-bottom: 22px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--s-ink-70);
+}
+.tv-menu__label {
+  margin: 0 0 9px 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--s-ink-70);
+}
+.tv-menu { grid-template-columns: 1fr 1fr; gap: 9px; }
+.tv-item {
+  min-height: 94px;
+  padding: 13px;
+  gap: 10px;
+  background: var(--s-paper);
+  background: color-mix(in srgb, var(--s-paper) 96%, var(--c-forest-100));
+  border: 1px solid var(--s-line-2);
+  border-radius: 16px;
+  box-shadow: none;
+  font-size: 13px;
+  line-height: 1.3;
+}
+.tv-item::before { display: none; }
+.tv-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(15,107,95,.24);
+  box-shadow: 0 8px 24px rgba(8,63,56,.08);
+}
+.tv-item__ic {
+  width: 32px; height: 32px; flex-basis: 32px;
+  background: var(--c-forest-100);
+  color: var(--c-forest);
+  border-radius: 10px;
+}
+.tv-item__l { padding-right: 11px; font-weight: 600; letter-spacing: -.01em; }
+.tv-item__s { margin-top: 4px; font-size: 10.5px; line-height: 1.35; color: var(--s-ink-45); }
+.tv-item__a {
+  display: grid;
+  position: absolute;
+  top: 13px; right: 11px;
+  width: 22px; height: 22px;
+  place-items: center;
+  color: var(--s-ink-45);
+}
+.tv-item:hover .tv-item__a { transform: translateX(2px); color: var(--c-forest); }
+
+.tv-m { gap: 8px; margin-bottom: 14px; }
+.tv-m__av { width: 28px; height: 28px; flex-basis: 28px; }
+.tv-m__c { max-width: 87%; }
+.tv-b { padding: 11px 13px; border-radius: 16px; font-size: 13.5px; line-height: 1.55; }
+.tv-m[data-f="bot"] .tv-b {
+  background: var(--s-paper);
+  border-color: var(--s-line);
+  border-bottom-left-radius: 6px;
+  box-shadow: var(--e-1);
+}
+.tv-m[data-f="user"] .tv-b {
+  background: var(--c-forest);
+  border-bottom-right-radius: 6px;
+  box-shadow: none;
+}
+.tv-t { opacity: 1; margin-top: 4px; font-size: 9.5px; }
+.tv-chips { gap: 6px; margin-top: 8px; }
+.tv-c {
+  min-height: 34px;
+  padding: 7px 11px;
+  border-radius: 11px;
+  border-color: var(--s-line-2);
+  background: var(--s-paper);
+  color: var(--s-ink-70);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.tv-c:hover {
+  transform: none;
+  background: var(--c-forest-100);
+  border-color: rgba(15,107,95,.2);
+  color: var(--c-forest-700);
+  box-shadow: none;
+}
+.tv-c[data-v="gold"] {
+  background: var(--c-forest);
+  border-color: var(--c-forest);
+  color: #fff;
+}
+.tv-c[data-v="gold"]:hover { background: var(--c-forest-700); filter: none; }
+
+.tv-comp {
+  padding: 12px 14px 13px;
+  background: var(--s-paper);
+  border-top: 1px solid var(--s-line);
+  box-shadow: 0 -8px 24px rgba(8,31,27,.025);
+}
+.tv-sug-label { margin-bottom: 7px; font-size: 10.5px; }
+.tv-sug-wrap::after { background: linear-gradient(90deg, transparent, var(--s-paper)); }
+.tv-row {
+  min-height: 52px;
+  margin-top: 10px;
+  padding: 5px 5px 5px 14px;
+  background: var(--s-ivory);
+  border-color: transparent;
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px var(--s-line-2);
+}
+.tv-row:focus-within {
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--c-forest), 0 0 0 3px rgba(15,107,95,.1);
+}
+.tv-in { min-height: 40px; padding: 9px 0; font-size: 13.5px; }
+.tv-go {
+  width: 40px; height: 40px; flex-basis: 40px;
+  border-radius: 12px;
+  background: var(--c-forest);
+}
+.tv-go:hover { transform: none; background: var(--c-forest-700); }
+.tv-go:active { transform: scale(.96); }
+.tv-go[disabled] { background: var(--s-sand); color: var(--s-ink-45); opacity: 1; }
+.tv-foot { margin-top: 8px; font-size: 9.5px; color: var(--s-ink-45); }
+
+.tv-launcher {
+  height: 58px;
+  padding: 4px;
+  border-radius: 18px;
+  background: var(--c-forest-900);
+  box-shadow: var(--e-brand);
+}
+.tv-launcher::before { box-shadow: inset 0 0 0 1px rgba(255,255,255,.09); }
+.tv-launcher__mark { width: 50px; height: 50px; }
+.tv-launcher__t1 { font-family: var(--f-sans); font-size: 13px; font-weight: 700; letter-spacing: -.01em; }
+.tv-launcher__t2 { margin-top: 2px; font-size: 10.5px; color: rgba(255,255,255,.68); }
+.tv-launcher__txt {
+  max-width: 220px;
+  opacity: 1;
+  padding: 0 15px 0 10px;
+}
+.tv-launcher:hover { transform: translateY(-2px); }
+.tv-launcher__dot { top: 2px; right: 2px; }
+
+.tv-nudge {
+  max-width: 286px;
+  border-radius: 16px 16px 4px 16px;
+  border-color: var(--s-line-2);
+  box-shadow: 0 14px 42px rgba(8,31,27,.14);
+  font-size: 12.5px;
+}
+.tv-nudge__body { padding: 13px 40px 13px 14px; }
+
+.tv-form { border-radius: 16px; box-shadow: none; }
+.tv-form::before { background: var(--c-forest); }
+.tv-btn[data-v="p"] { background: var(--c-forest); }
+
+@media (prefers-color-scheme: dark) {
+  #trovito[data-theme="auto"] {
+    --s-ink: #EDF5F2;
+    --s-ink-70: #A8B8B3;
+    --s-ink-45: #73837E;
+    --s-paper: #14201D;
+    --s-ivory: #0D1614;
+    --s-sand: #1C2B27;
+    --s-line: rgba(255,255,255,.07);
+    --s-line-2: rgba(255,255,255,.11);
+    --c-forest-100: #183832;
+  }
+  .tv-head { background: var(--s-paper); }
+}
+
+@media (max-height: 700px) and (min-width: 521px) {
+  .tv-panel { height: calc(100dvh - 20px); bottom: 10px; }
+  .tv-body { padding-top: 16px; }
+  .tv-hero__p { margin-bottom: 14px; }
+  .tv-item { min-height: 82px; }
+}
+
+@media (max-width: 520px) {
+  .tv-panel { width: 100%; height: 100dvh; max-height: 100dvh; border-radius: 0; }
+  .tv-head { padding: calc(14px + env(safe-area-inset-top, 0px)) 10px 11px 13px; }
+  .tv-head__name { font-size: 14px; }
+  .tv-head__mark { width: 40px; height: 40px; flex-basis: 40px; }
+  .tv-body { padding: 19px 14px 12px; }
+  .tv-hero__h { font-size: 26px; }
+  .tv-hero__p { margin-bottom: 18px; }
+  .tv-menu { grid-template-columns: 1fr; gap: 8px; }
+  .tv-item { min-height: 66px; align-items: center; padding: 11px 12px; }
+  .tv-item__a { top: 50%; transform: translateY(-50%); }
+  .tv-item:hover .tv-item__a { transform: translate(2px,-50%); }
+  .tv-item__s { font-size: 11px; }
+  .tv-comp { padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .tv-foot { margin-top: 7px; }
+}
+
+body.trovito-embed {
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+body.trovito-embed > main { display: none !important; }
+body.trovito-embed #trovito { background: transparent; }
+</style>
+</head>
+
+<body class="demo" style="margin:0;min-height:100dvh;background:#F6F8F7;font-family:Inter,system-ui,sans-serif;color:#14211E">
+
+<!-- ── Página de muestra · borrá esta sección al integrar ────────────── -->
+<main style="max-width:760px;margin:0 auto;padding:15vh 26px 45vh">
+  <p style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#A5813F;font-weight:700">Los Trovadores · Heladería artesanal</p>
+  <h1 style="font-size:clamp(32px,6.5vw,52px);line-height:1.05;letter-spacing:-.03em;margin:14px 0 18px;font-weight:600">Don Trovito atiende.</h1>
+  <p style="font-size:17px;line-height:1.65;color:#4C5D5A;max-width:54ch">Tocá la galera abajo a la derecha. Preguntale por sabores, opciones sin azúcar, aptos celíacos, precios, tortas por encargo, delivery o medios de pago. Si algo no lo sabe, te toma el mensaje y responde una persona.</p>
+</main>
+
+<!-- ═══════════════════════════ WIDGET ══════════════════════════════ -->
+<div id="trovito" data-theme="auto" data-open="false"></div>
+<script>
+(function () {
+  "use strict";
+
+  var EMBED = false;
+  try { EMBED = new URLSearchParams(window.location.search).get("embed") === "1"; } catch (e) {}
+  if (EMBED) document.body.classList.add("trovito-embed");
+
+  function notifyHost(state) {
+    if (!EMBED || window.parent === window) return;
+    try { window.parent.postMessage({ source: "don-trovito", state: state }, "*"); } catch (e) {}
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ⑤  CONFIGURACIÓN — lo único que necesitás editar
+     ═══════════════════════════════════════════════════════════════════════ */
+  var TROVITO = {
+
+    brand: {
+      name:  "Don Trovito te responde",
+      role:  "Asistente virtual · responde al instante",
+      house: "Los Trovadores",
+      // Dejalo vacío para usar la marca vectorial (recomendado: nítida, 0 KB de red).
+      // Si querés la foto real, pegá acá la URL de un PNG cuadrado con fondo transparente.
+      photo: ""
+    },
+
+    contact: {
+      whatsapp:  "59898388553",           // ← solo números, con código de país
+      phone:     "+59827075165",          // ← fijo del local ("" si no aplica)
+      mapsUrl:   "https://www.google.com/maps/search/?api=1&query=Helader%C3%ADa+Los+Trovadores+Gabriel+Pereira+3202+Montevideo",
+      instagram: "https://www.instagram.com/heladerialostrovadores/",
+      email:     "info@lostrovadores.com.uy"
+    },
+
+    form: {
+      web3formsKey: "",                   // ← https://web3forms.com · gratis, 1 minuto
+      formspreeUrl: "",                   // ← alternativa: https://formspree.io/f/xxxxxxx
+      subject:      "Consulta desde la web · Don Trovito"
+    },
+
+    behavior: {
+      nudgeDelay:    10000,               // ms hasta la invitación (0 = desactivar)
+      nudgeText:     "¿Buscás un sabor o querés hacer un pedido? Te ayudo.",
+      escalateAfter: 2,                   // consultas sin respuesta antes de ofrecer el formulario
+      persist:       true,                // recordar la charla mientras dura la pestaña
+      seoFaq:        true                 // publicar JSON-LD FAQPage para Google
+    }
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ⑥  MARCA · Don Trovito vectorizado
+     Galera salvia · moño · pechera marfil · solapas doradas.
+     Se define una sola vez y se referencia con <use> en cada instancia.
+     ═══════════════════════════════════════════════════════════════════════ */
+  var MARK_BODY =
+    '<g clip-path="url(#dtClip)">' +
+      /* frac y hombros */
+      '<path d="M60 93C41 95 28.5 105 24 124h72C91.5 105 79 95 60 93Z" fill="#F7F2E5"/>' +
+      '<path d="M60 95 44 106l-5.5 18H49l11-17Z" fill="url(#dtGold)"/>' +
+      '<path d="M60 95l16 11 5.5 18H71l-11-17Z" fill="url(#dtGold)"/>' +
+      /* pechera plisada */
+      '<path d="M60 103 52.5 124h15Z" fill="#FFFDF8"/>' +
+      '<path d="M57.5 111 56.4 124M62.5 111l1.1 13" stroke="#E4DBC2" stroke-width="1" stroke-linecap="round"/>' +
+      /* moño */
+      '<path d="M58.8 100 46.3 93.6a2.7 2.7 0 0 0-3.6 2.6v7.4a2.7 2.7 0 0 0 3.6 2.6Z" fill="#1B2624"/>' +
+      '<path d="m61.2 100 12.5-6.4a2.7 2.7 0 0 1 3.6 2.6v7.4a2.7 2.7 0 0 1-3.6 2.6Z" fill="#1B2624"/>' +
+      '<rect x="55.9" y="95.3" width="8.2" height="9.4" rx="3.5" fill="#26332F"/>' +
+      /* cabeza */
+      '<ellipse cx="60" cy="68" rx="27.5" ry="27" fill="url(#dtInk)"/>' +
+      /* antifaz blanco */
+      '<circle cx="51.4" cy="63" r="11.7" fill="#FCFBF6"/>' +
+      '<circle cx="68.6" cy="63" r="11.7" fill="#FCFBF6"/>' +
+      /* pupilas */
+      '<circle cx="50.4" cy="64.6" r="4.8" fill="#101A19"/>' +
+      '<circle cx="69.6" cy="64.6" r="4.8" fill="#101A19"/>' +
+      '<circle cx="52.1" cy="62.8" r="1.7" fill="#fff"/>' +
+      '<circle cx="71.3" cy="62.8" r="1.7" fill="#fff"/>' +
+      /* pico */
+      '<path d="M52.7 71.3c3.8-.9 10.8-.9 14.6 0-1.2 7.7-4 13.2-7.3 14-3.3-.8-6.1-6.3-7.3-14Z" fill="url(#dtBeak)"/>' +
+      '<path d="M60 85.3c3.3-.8 6.1-6.3 7.3-14-2.2-.5-4.6-.7-7.3-.7Z" fill="#BE7838" opacity=".45"/>' +
+    "</g>" +
+    /* galera — grupo animable */
+    '<g class="dt__hat">' +
+      '<path d="M42.5 17v20a17.5 5.6 0 0 0 35 0V17Z" fill="url(#dtHat)"/>' +
+      '<path d="M46.2 18.4v18.2q0 2.9 2.4 3.9V19.2Z" fill="#fff" opacity=".2"/>' +
+      '<path d="M42.5 31.4v5.6a17.5 5.6 0 0 0 35 0v-5.6a17.5 5.6 0 0 1-35 0Z" fill="#1B2624"/>' +
+      '<ellipse cx="60" cy="30.6" rx="17.5" ry="5.6" fill="none" stroke="url(#dtGold)" stroke-width="1.1" opacity=".85"/>' +
+      '<ellipse cx="60" cy="42" rx="32" ry="7.3" fill="url(#dtBrim)"/>' +
+      '<ellipse cx="60" cy="41.2" rx="32" ry="7.3" fill="url(#dtHat)"/>' +
+      '<ellipse cx="60" cy="17" rx="17.5" ry="5.6" fill="#C6DCAD"/>' +
+    "</g>";
+
+  var DEFS =
+    '<svg id="dtDefs" width="0" height="0" aria-hidden="true" focusable="false" ' +
+         'style="position:absolute;width:0;height:0;overflow:hidden">' +
+      "<defs>" +
+        '<linearGradient id="dtHat" x1=".18" y1="0" x2=".86" y2="1">' +
+          '<stop offset="0" stop-color="#BEDBA2"/><stop offset="1" stop-color="#82A768"/></linearGradient>' +
+        '<linearGradient id="dtBrim" x1="0" y1="0" x2="1" y2="1">' +
+          '<stop offset="0" stop-color="#8FB472"/><stop offset="1" stop-color="#6B8C52"/></linearGradient>' +
+        '<linearGradient id="dtGold" x1="0" y1="0" x2=".9" y2="1">' +
+          '<stop offset="0" stop-color="#E4CD96"/><stop offset=".55" stop-color="#C6A464"/>' +
+          '<stop offset="1" stop-color="#9A7739"/></linearGradient>' +
+        '<linearGradient id="dtInk" x1=".22" y1="0" x2=".82" y2="1">' +
+          '<stop offset="0" stop-color="#38443F"/><stop offset="1" stop-color="#0E1817"/></linearGradient>' +
+        '<linearGradient id="dtBeak" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#F2BC7B"/><stop offset="1" stop-color="#CC8845"/></linearGradient>' +
+        '<clipPath id="dtClip"><circle cx="60" cy="60" r="60"/></clipPath>' +
+        '<symbol id="dtMark" viewBox="0 0 120 120">' + MARK_BODY + "</symbol>" +
+      "</defs>" +
+    "</svg>";
+
+  /* Medallón completo (animable). `tip` habilita el saludo de galera. */
+  function medallion(tip) {
+    if (TROVITO.brand.photo) {
+      return '<span class="dt-medallion"><img src="' + TROVITO.brand.photo +
+             '" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></span>';
+    }
+    return '<span class="dt-medallion' + (tip ? " dt-tip" : "") + '">' +
+             '<svg class="dt" viewBox="0 0 120 120" aria-hidden="true" focusable="false">' +
+               MARK_BODY +
+             "</svg>" +
+           "</span>";
+  }
+  /* Instancia liviana por referencia — para los avatares de cada mensaje */
+  function medallionRef() {
+    if (TROVITO.brand.photo) return medallion(false);
+    return '<span class="dt-medallion">' +
+             '<svg class="dt" viewBox="0 0 120 120" aria-hidden="true" focusable="false">' +
+               '<use href="#dtMark"/></svg></span>';
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ⑦  BASE DE CONOCIMIENTO — 46 temas
+     ─────────────────────────────────────────────────────────────────────
+       id    identificador
+       p     patrones y sinónimos (las frases largas puntúan más)
+       not   palabras que descartan la intención
+       w     peso de desempate
+       q     pregunta canónica → alimenta el JSON-LD FAQPage (SEO)
+       a     respuesta · **negrita** · - viñeta · Clave | Valor · --- regla
+       c     acciones: {t,a} donde a = ask | wa | tel | map | ig | form
+             v = pregunta o mensaje · s:"gold" para destacar
+     ═══════════════════════════════════════════════════════════════════════ */
+  var KB = [
+
+    /* ── Conversación ───────────────────────────────────────────────── */
+    {
+      id: "saludo", w: 0.8,
+      p: ["hola", "holaa", "buenas", "buen dia", "buenos dias", "buenas tardes",
+          "buenas noches", "hey", "que tal", "como andas", "como va", "saludos", "ola"],
+      a: "Buenas. Soy **Don Trovito**, y me sé el mostrador de memoria.\n\nPuedo contarte de sabores, de nuestras líneas **sin azúcar**, **sin gluten**, **sin lactosa** y **vegana**, de precios, encargos y entregas.\n\n¿Por dónde arrancamos?",
+      c: [{ t: "Ver sabores", a: "ask", v: "que sabores tienen" },
+          { t: "Sin azúcar", a: "ask", v: "sin azucar" },
+          { t: "Precios", a: "ask", v: "precios" },
+          { t: "Hacer un pedido", a: "ask", v: "quiero hacer un pedido", s: "gold" }]
+    },
+    {
+      id: "gracias", w: 0.8,
+      p: ["gracias", "muchas gracias", "genial", "buenisimo", "perfecto", "dale",
+          "barbaro", "joya", "de diez", "excelente", "ok gracias", "mil gracias"],
+      a: "Un gusto. Cualquier otra cosa, acá me quedo.",
+      c: [{ t: "Hacer un pedido", a: "wa", v: "Hola, quiero hacer un pedido.", s: "gold" }]
+    },
+    {
+      id: "despedida", w: 0.8,
+      p: ["chau", "adios", "hasta luego", "nos vemos", "bye", "me voy", "hasta la proxima"],
+      a: "Hasta la próxima. Te esperamos por el local.",
+      c: [{ t: "Ver ubicación", a: "map" }]
+    },
+    {
+      id: "identidad",
+      p: ["quien sos", "sos un bot", "sos un robot", "sos una persona", "sos humano",
+          "eres un bot", "que sos", "trovito", "don trovito", "sos real", "sos una maquina",
+          "hablo con una persona", "esto es automatico"],
+      a: "Soy **Don Trovito**, el pingüino de galera que hace de anfitrión de la casa. Automático, sí — pero bien instruido.\n\nSi preferís una persona de carne y hueso, te paso con el equipo en dos toques.",
+      c: [{ t: "Hablar con una persona", a: "ask", v: "hablar con una persona", s: "gold" }]
+    },
+    {
+      id: "capacidades",
+      p: ["que podes hacer", "en que me podes ayudar", "ayuda", "help", "opciones",
+          "menu", "que sabes", "para que servis", "que puedo preguntar"],
+      a: "Manejo estos temas:\n\n- **Sabores** — clásicos, chocolates, frutales, novedades\n- **Líneas especiales** — sin azúcar, sin gluten, sin lactosa, vegana\n- **Precios**, promociones y encargos\n- **Tortas y postres helados** a pedido\n- **Entregas**, retiro, zonas y tiempos\n- **Horarios**, ubicación y medios de pago\n- **Eventos** y venta mayorista\n\nEscribime con tus palabras: te entiendo igual.",
+      c: [{ t: "Sabores", a: "ask", v: "sabores" },
+          { t: "Precios", a: "ask", v: "precios" },
+          { t: "Entregas", a: "ask", v: "delivery" }]
+    },
+
+    /* ── Sabores ────────────────────────────────────────────────────── */
+    {
+      id: "sabores", w: 1.1,
+      q: "¿Qué sabores de helado tiene Los Trovadores?",
+      p: ["que sabores tienen", "cuales son los sabores", "sabores", "sabor", "gustos",
+          "que gustos hay", "carta de sabores", "lista de sabores", "variedades",
+          "que hay de helado", "clasicos", "sabores clasicos", "que helados tienen"],
+      not: ["sin azucar", "sin gluten", "sin lactosa", "vegano", "celiaco"],
+      a: "Más de **50 sabores artesanales**, elaborados en casa y en tandas chicas.\n\nLos que nunca faltan:\n\n- Dulce de leche · y granizado\n- Crema del cielo\n- Chocolate italiano · y suizo\n- Sambayón\n- Crema Oreo\n- Frutilla a la panna\n- Nutella\n- Mantecol\n- Tramontana\n\n¿Querés que abra alguna categoría?",
+      c: [{ t: "Chocolates", a: "ask", v: "sabores de chocolate" },
+          { t: "Frutales", a: "ask", v: "sabores frutales al agua" },
+          { t: "Novedades", a: "ask", v: "sabores nuevos" },
+          { t: "Líneas especiales", a: "ask", v: "opciones sin azucar sin gluten" }]
+    },
+    {
+      id: "sabores_chocolate",
+      p: ["chocolate", "chocolates", "sabores de chocolate", "chocolatosos",
+          "chocolate amargo", "chocolate blanco", "cacao"],
+      a: "La línea de chocolates:\n\n- **Chocolate italiano** — el más intenso, cacao amargo\n- **Chocolate suizo** — cremoso, equilibrado\n- Chocolate blanco\n- Chocolate con almendras\n- Chocolate con nueces\n- Chocotorta\n- Nutella\n- Brownie con dulce de leche\n\nTambién hay **chocolate clásico apto celíacos** y **chocolate sin azúcar**.",
+      c: [{ t: "Sin azúcar", a: "ask", v: "sin azucar" },
+          { t: "Apto celíacos", a: "ask", v: "sin gluten" },
+          { t: "Precios", a: "ask", v: "precios" }]
+    },
+    {
+      id: "sabores_frutales",
+      p: ["frutales", "al agua", "sabores al agua", "sorbete", "sorbetes", "fruta",
+          "frutas", "limon", "frutilla", "mango", "maracuya", "frutos rojos",
+          "naranja", "arandanos", "sabores livianos", "refrescante"],
+      a: "Los más livianos de la casa.\n\n**Al agua:** limón, frutilla, mango, frutos rojos, maracuyá, naranja, ananá.\n\n**En crema:** frutilla a la panna, limón a la crema, arándanos.\n\nCasi todos los al agua son **sin lactosa**, y varios **aptos veganos**.",
+      c: [{ t: "Línea vegana", a: "ask", v: "vegano" },
+          { t: "Sin lactosa", a: "ask", v: "sin lactosa" }]
+    },
+    {
+      id: "sabores_dulce_leche",
+      p: ["dulce de leche", "ddl", "dulce leche", "tienen dulce de leche"],
+      a: "Nuestra bandera. Va en cuatro versiones:\n\n- Dulce de leche clásico\n- Dulce de leche granizado\n- Súper dulce de leche, con más ondas\n- Dulce de leche **sin azúcar**\n\nY es la base de la cassatta y de buena parte de los postres.",
+      c: [{ t: "Ver postres", a: "ask", v: "postres helados" },
+          { t: "Precios", a: "ask", v: "precios" }]
+    },
+    {
+      id: "sabores_nuevos",
+      p: ["sabores nuevos", "novedades", "sabor del mes", "nuevo sabor", "temporada",
+          "que hay de nuevo", "sabores de temporada", "ultimos sabores", "lanzamiento"],
+      a: "Además de los fijos, rotamos **sabores de temporada**.\n\nComo cambian seguido, prefiero que te pasen la lista del día antes que arriesgar una que ya salió de vitrina.",
+      c: [{ t: "Pedir la lista de hoy", a: "wa", v: "Hola, ¿qué sabores nuevos tienen esta semana?", s: "gold" },
+          { t: "Ver Instagram", a: "ig" }]
+    },
+
+    /* ── Líneas especiales ──────────────────────────────────────────── */
+    {
+      id: "sin_azucar", w: 1.4,
+      q: "¿Tienen helado sin azúcar apto para diabéticos?",
+      p: ["sin azucar", "sin azucares", "diabetico", "diabeticos", "diabetes", "adu",
+          "apto diabetico", "apto para diabeticos", "light", "dietetico", "sucralosa",
+          "sucralight", "endulzante", "azucar", "sin dulce", "keto", "bajo en azucar"],
+      a: "Sí. Tenemos una **línea completa sin azúcar**, endulzada con sucralight, **apta para diabéticos** y **aprobada por ADU**.\n\nDisponible en:\n\n- Potes de ¼ L a 2 L\n- Paletas y palitos\n- Sándwiches de helado\n- Alfajores helados\n- Cassatta y torta helada\n\nTambién tenemos la **Guía CEAPS**, con la tabla nutricional completa por sabor, para quien necesita contar carbohidratos.",
+      c: [{ t: "Pedir la guía", a: "wa", v: "Hola, ¿me pasan la guía nutricional de la línea sin azúcar?", s: "gold" },
+          { t: "Precios", a: "ask", v: "precios" },
+          { t: "También sin gluten", a: "ask", v: "sin gluten" }]
+    },
+    {
+      id: "sin_gluten", w: 1.4,
+      q: "¿Tienen helado sin gluten, apto para celíacos?",
+      p: ["sin gluten", "sin tacc", "tacc", "celiaco", "celiaca", "celiacos",
+          "apto celiaco", "aptos celiacos", "celiaquia", "gluten", "libre de gluten"],
+      a: "Sí. Sabores **aptos celíacos (sin T.A.C.C.)**, elaborados evitando contaminación cruzada:\n\n- Dulce de leche\n- Chocolate clásico\n- Crema vainilla\n- Frutilla al agua\n- Limón al agua\n- Todas las barritas veganas\n\nSi tu celiaquía es estricta, avisanos al encargar y lo preparamos con utensilios exclusivos.",
+      c: [{ t: "Consultar mi caso", a: "form" },
+          { t: "Línea vegana", a: "ask", v: "vegano" },
+          { t: "Sin azúcar", a: "ask", v: "sin azucar" }]
+    },
+    {
+      id: "sin_lactosa", w: 1.4,
+      q: "¿Tienen helado sin lactosa?",
+      p: ["sin lactosa", "lactosa", "deslactosado", "deslactosada", "intolerante a la lactosa",
+          "intolerancia", "sin leche de vaca", "apto intolerantes"],
+      a: "Sí, elaborados con **leche deslactosada Conaprole**.\n\n- Potes de ¼ L a 1 L\n- Varios sabores a elección\n- Misma cremosidad que la línea clásica\n\nSi la intolerancia es fuerte, o hay alergia a la proteína de la leche, te conviene la **línea vegana**: directamente no lleva lácteos.",
+      c: [{ t: "Ver línea vegana", a: "ask", v: "vegano" },
+          { t: "Hacer un pedido", a: "wa", v: "Hola, quiero pedir helado sin lactosa.", s: "gold" }]
+    },
+    {
+      id: "vegano", w: 1.3,
+      q: "¿Tienen opciones veganas?",
+      p: ["vegano", "veganos", "vegana", "veganas", "vegan", "plant based",
+          "sin leche", "sin lacteos", "a base de agua", "apto vegano", "veganismo"],
+      a: "Sí — y de yapa, **aptas para celíacos**.\n\n**Barritas y paletas veganas:**\n\n- Frutilla y arándanos\n- Menta blanca con chocolate\n- Chocolate con nueces\n\n**Al agua, aptos veganos:** mango, frutos rojos, limón, maracuyá y frutilla.",
+      c: [{ t: "Precios", a: "ask", v: "precios paletas" },
+          { t: "Pedir veganos", a: "wa", v: "Hola, quiero pedir las opciones veganas.", s: "gold" }]
+    },
+    {
+      id: "alergenos",
+      p: ["alergia", "alergias", "alergico", "frutos secos", "nueces", "mani",
+          "almendras", "huevo", "soja", "aplv", "alergeno", "alergenos",
+          "contiene frutos secos", "tiene nueces"],
+      a: "Esto lo tomamos en serio, así que te lo digo derecho:\n\n- Varios sabores **contienen frutos secos** — almendras, nueces, Mantecol, praliné — y se elaboran en la misma planta, así que **puede haber trazas** en otros.\n- Los **helados al agua** y la **línea vegana** son los de menor riesgo de trazas de leche y huevo.\n- Tenemos la ficha de ingredientes y alérgenos de **cada sabor**.\n\nSi la alergia es severa, contanos cuál es y te confirmamos sabor por sabor antes de que compres.",
+      c: [{ t: "Consultar mi alergia", a: "form", s: "gold" },
+          { t: "Escribir por WhatsApp", a: "wa", v: "Hola, tengo una consulta sobre alérgenos." }]
+    },
+    {
+      id: "ingredientes",
+      q: "¿El helado de Los Trovadores es artesanal?",
+      p: ["ingredientes", "conservantes", "colorantes", "artesanal", "como lo hacen",
+          "de que esta hecho", "es natural", "lleva quimicos", "materia prima",
+          "es artesanal de verdad", "grasa vegetal", "leche que usan"],
+      a: "Artesanal de verdad, no industrial:\n\n- Elaboración **propia, en tandas chicas**\n- **Leche y crema Conaprole** como base\n- **Sin conservantes agregados** ni grasas hidrogenadas\n- Fruta de estación en los frutales\n\nPor eso se siente más denso y se derrite distinto a uno de supermercado: lleva **mucho menos aire incorporado**.",
+      c: [{ t: "Ver sabores", a: "ask", v: "sabores" },
+          { t: "Sobre la casa", a: "ask", v: "historia de la heladeria" }]
+    },
+    {
+      id: "nutricional",
+      p: ["calorias", "informacion nutricional", "tabla nutricional", "engorda",
+          "cuantas calorias", "carbohidratos", "hidratos", "proteinas", "grasas",
+          "valor nutricional", "ceaps", "conteo de carbohidratos"],
+      a: "Tenemos la **tabla nutricional completa** de cada sabor, y para la línea sin azúcar además la **Guía CEAPS**, pensada para contar carbohidratos con precisión.\n\nDecime qué sabor o qué línea te interesa y te paso los valores exactos. Prefiero darte el número correcto y no una estimación.",
+      c: [{ t: "Pedir la guía", a: "wa", v: "Hola, ¿me pasan la información nutricional?", s: "gold" },
+          { t: "Dejar mi consulta", a: "form" }]
+    },
+
+    /* ── Precios ────────────────────────────────────────────────────── */
+    {
+      id: "precios", w: 1.2,
+      q: "¿Cuánto sale un pote de helado?",
+      p: ["precio", "precios", "cuanto sale", "cuanto cuesta", "cuanto vale", "valor",
+          "lista de precios", "que precio tiene", "cuanto esta", "tarifas",
+          "cuanto sale el kilo", "precio del litro", "sale caro"],
+      not: ["torta", "paleta", "envio", "delivery"],
+      a: "**Potes**\n\nPote ¼ L | $399\nPote ½ L | $499\nPote ¾ L | $610\nPote 1 L | $899\nPote 1,5 L | $1.119\nPote 2 L | $1.489\n\n---\nRotamos promociones de hasta **42% off**.\n\n_Precios de referencia; te confirmamos el vigente al encargar._",
+      c: [{ t: "Ver promociones", a: "ask", v: "promociones" },
+          { t: "Paletas", a: "ask", v: "cuanto salen las paletas" },
+          { t: "Tortas", a: "ask", v: "cuanto sale una torta helada" },
+          { t: "Pedir ahora", a: "wa", v: "Hola, quiero hacer un pedido.", s: "gold" }]
+    },
+    {
+      id: "precios_paletas",
+      p: ["paletas", "paleta", "palito", "palitos", "cuanto salen las paletas",
+          "precio paletas", "bombon helado", "helado de palito"],
+      a: "**Paletas y palitos** desde **$210**.\n\nHay de crema, bañadas en chocolate, al agua, **sin azúcar** y las **barritas veganas** — que además son aptas celíacos.\n\nSon lo mejor para llevar: aguantan el traslado mucho mejor que un pote.",
+      c: [{ t: "Ver veganas", a: "ask", v: "vegano" },
+          { t: "Promociones", a: "ask", v: "promociones" }]
+    },
+    {
+      id: "promos", w: 1.2,
+      p: ["promo", "promos", "promocion", "promociones", "descuento", "descuentos",
+          "oferta", "ofertas", "2x1", "combo", "combos", "rebaja", "hay descuento",
+          "tienen promo", "off"],
+      a: "Siempre hay algo:\n\n- **Combos de potes** con hasta 42% off\n- **Promociones de temporada**, que rotan cada semana\n- Beneficios según el **medio de pago**\n\nCambian seguido, así que te paso las vigentes de hoy y no una vieja.",
+      c: [{ t: "Ver las de hoy", a: "wa", v: "Hola, ¿qué promociones tienen hoy?", s: "gold" },
+          { t: "Instagram", a: "ig" }]
+    },
+
+    /* ── Encargos ───────────────────────────────────────────────────── */
+    {
+      id: "postres",
+      p: ["postre", "postres", "postres helados", "omelette", "omelette surprise",
+          "praline", "que postres tienen", "algo para la sobremesa"],
+      not: ["torta helada", "cumpleanos"],
+      a: "**Postres helados**\n\nOmelette Surprise | $580\nCassatta clásica | $950\nTorta helada | $2.250\nTorta Praliné | $2.250\n\n---\nTodos con **versión sin azúcar**. Las tortas conviene encargarlas con anticipación.",
+      c: [{ t: "Encargar un postre", a: "wa", v: "Hola, quiero encargar un postre helado.", s: "gold" },
+          { t: "Tortas a pedido", a: "ask", v: "torta por encargo" },
+          { t: "Versión sin azúcar", a: "ask", v: "sin azucar" }]
+    },
+    {
+      id: "tortas", w: 1.2,
+      q: "¿Hacen tortas heladas por encargo?",
+      p: ["torta", "tortas", "torta helada", "torta por encargo", "encargar torta",
+          "torta de cumpleanos", "torta personalizada", "cuanto sale una torta helada",
+          "hacen tortas", "torta praline", "torta a pedido"],
+      a: "Sí, **tortas heladas por encargo**.\n\nTorta helada | desde $2.250\nTorta Praliné | $2.250\n\n---\n- Sabores a elección y **versión sin azúcar**\n- Tamaño y decoración personalizables\n\n**Anticipación mínima: 48 horas.** En fechas fuertes, una semana. Definimos tamaño, sabores y fecha en un minuto por WhatsApp.",
+      c: [{ t: "Encargar mi torta", a: "wa", v: "Hola, quiero encargar una torta helada. Les paso los detalles:", s: "gold" },
+          { t: "Dejar los datos acá", a: "form" },
+          { t: "Sin azúcar", a: "ask", v: "torta sin azucar" }]
+    },
+    {
+      id: "cassatta",
+      p: ["cassatta", "casata", "cassata", "casatta"],
+      a: "La **cassatta clásica** ($950) es de las más pedidas: capas de helado con fruta y frutos secos, cortada en porciones.\n\nTambién en **versión sin azúcar**.",
+      c: [{ t: "Encargar", a: "wa", v: "Hola, quiero encargar una cassatta.", s: "gold" }]
+    },
+    {
+      id: "alfajores",
+      p: ["alfajor", "alfajores", "sandwich", "sandwiches", "sandwich de helado",
+          "alfajor helado", "para la vianda"],
+      a: "**Sándwiches de helado** y **alfajores helados**, también en versión sin azúcar.\n\nPerfectos para llevar, o para vender por unidad si tenés un local o un evento.",
+      c: [{ t: "Consultar precios", a: "wa", v: "Hola, ¿qué precio tienen los alfajores y sándwiches de helado?" },
+          { t: "Compra por cantidad", a: "ask", v: "mayorista" }]
+    },
+    {
+      id: "eventos", w: 1.2,
+      p: ["evento", "eventos", "cumpleanos", "casamiento", "fiesta", "catering",
+          "carrito de helados", "para una fiesta", "para un evento", "cumple",
+          "quince", "empresa", "corporativo", "servicio para eventos"],
+      a: "Sí, trabajamos eventos: cumpleaños, casamientos, fiestas de fin de año y eventos de empresa.\n\nSegún el caso armamos:\n\n- **Baldes** de 5 L y 10 L con varios sabores\n- **Paletas y alfajores** por unidad, listos para servir\n- **Postres helados** porcionados\n- Opciones **sin azúcar, sin gluten y veganas**, para que nadie quede afuera\n\nPasanos **fecha, cantidad de personas y lugar** y te armamos el presupuesto.",
+      c: [{ t: "Pedir presupuesto", a: "form", s: "gold" },
+          { t: "Escribir por WhatsApp", a: "wa", v: "Hola, quiero un presupuesto para un evento.\nFecha:\nPersonas:\nLugar:" }]
+    },
+    {
+      id: "cantidad",
+      q: "¿Cuánto helado comprar según la cantidad de personas?",
+      p: ["cuanto helado", "para cuantas personas", "cuanto compro", "que cantidad",
+          "alcanza para", "cuantos litros", "cuanta cantidad para", "rinde"],
+      a: "La regla que usamos en el mostrador:\n\n1 litro | 4 a 5 porciones\n2 litros | 8 a 10 personas\nBalde 5 L | 20 a 25 personas\n\n---\nSi va de postre después de una comida, calculá un poco menos. Si es una tarde de calor con chicos, un poco más.\n\nDecime cuántos son y te digo exactamente qué conviene.",
+      c: [{ t: "Consultar mi caso", a: "wa", v: "Hola, somos ___ personas. ¿Cuánto helado me conviene pedir?", s: "gold" },
+          { t: "Ver baldes", a: "ask", v: "baldes mayorista" }]
+    },
+    {
+      id: "mayorista",
+      p: ["mayorista", "por mayor", "balde", "baldes", "revendedor", "revender",
+          "para mi negocio", "restaurante", "distribuidor", "compra grande",
+          "5 litros", "10 litros", "precio mayorista"],
+      a: "Sí, vendemos **por mayor** a restaurantes, cafeterías, kioscos y eventos.\n\n- Baldes de **5 L y 10 L**\n- Precio diferencial por volumen\n- Entrega y frecuencia a convenir\n- También paletas y alfajores por caja\n\nContanos qué tipo de negocio tenés y qué volumen manejarías, y te pasamos la lista mayorista.",
+      c: [{ t: "Pedir lista mayorista", a: "form", s: "gold" },
+          { t: "WhatsApp comercial", a: "wa", v: "Hola, me interesa la venta mayorista. Mi negocio es:" }]
+    },
+
+    /* ── Logística ──────────────────────────────────────────────────── */
+    {
+      id: "delivery", w: 1.2,
+      q: "¿Hacen delivery de helado?",
+      p: ["delivery", "envio", "envios", "envian", "reparto", "a domicilio",
+          "mandan a domicilio", "hacen delivery", "llevan a casa", "pedidos ya",
+          "pedidosya", "rappi", "uber eats", "traen"],
+      a: "Sí, hacemos **envíos a domicilio**. El helado viaja en **conservadora con hielo seco**, así llega en punto.\n\nDe más rápido a menos:\n\n1. **WhatsApp** — te tomamos el pedido y coordinamos ahí mismo\n2. **Teléfono** al local\n3. **Retiro** en el local, sin costo de envío\n\nDecime tu zona y te confirmo si llegamos y en cuánto.",
+      c: [{ t: "Pedir por WhatsApp", a: "wa", v: "Hola, quiero hacer un pedido. Mi zona es:", s: "gold" },
+          { t: "Zonas de entrega", a: "ask", v: "a que zonas llegan" },
+          { t: "Costo del envío", a: "ask", v: "cuanto sale el envio" }]
+    },
+    {
+      id: "pedido_como", w: 1.1,
+      p: ["quiero hacer un pedido", "como pido", "como hago un pedido", "quiero pedir",
+          "quiero comprar", "hacer pedido", "tomar pedido", "encargar", "reservar",
+          "comprar online", "tienen tienda online", "pedir por internet"],
+      a: "Perfecto. Para tomarte el pedido te paso con el mostrador — así te confirman el stock del día.\n\nTené a mano:\n\n- **Sabores** y cantidades\n- **Dirección**, o si retirás en el local\n- **Horario** en que lo querés\n- Si necesitás **sin azúcar, sin gluten o vegano**\n\nTocá el botón y te llevo con el mensaje ya armado.",
+      c: [{ t: "Pedir por WhatsApp", a: "wa", v: "Hola, quiero hacer un pedido.\nSabores:\nCantidad:\nDirección o retiro:\nHorario:", s: "gold" },
+          { t: "Llamar al local", a: "tel" },
+          { t: "Dejar el pedido acá", a: "form" }]
+    },
+    {
+      id: "zonas",
+      p: ["zonas", "a que zonas llegan", "llegan a", "hacen envio a", "cubren",
+          "barrios", "llegan hasta", "reparten en", "salen de montevideo",
+          "canelones", "ciudad de la costa", "interior"],
+      a: "Cubrimos **Montevideo y alrededores**. Para pedidos grandes o eventos podemos coordinar puntos más lejanos.\n\nEl radio cambia según el día y la carga, así que decime **tu barrio o dirección** y te confirmo en el momento si llegamos y con qué costo.",
+      c: [{ t: "Consultar mi zona", a: "wa", v: "Hola, ¿llegan con delivery a mi zona? Estoy en:", s: "gold" },
+          { t: "Ver el local", a: "map" }]
+    },
+    {
+      id: "costo_envio",
+      p: ["costo de envio", "cuanto sale el envio", "el envio es gratis", "precio del delivery",
+          "cobran envio", "envio gratis", "monto minimo", "pedido minimo"],
+      a: "El costo **depende de la zona** y de la distancia al local. En algunos casos hay **envío bonificado** superando un monto de compra.\n\nPasame tu dirección y el pedido aproximado y te digo el costo exacto — no quiero tirarte un número que después no sea.",
+      c: [{ t: "Consultar mi envío", a: "wa", v: "Hola, ¿cuánto me sale el envío? Estoy en:", s: "gold" }]
+    },
+    {
+      id: "tiempo_entrega",
+      p: ["cuanto demora", "cuanto tardan", "tiempo de entrega", "en cuanto llega",
+          "demora", "tardanza", "para hoy", "para ahora", "urgente", "lo necesito hoy",
+          "cuanto tiempo"],
+      a: "**Potes y paletas** suelen salir en el día, muchas veces en el momento.\n\n**Encargos** — tortas, cassattas, eventos, mayorista — necesitan **48 horas** de anticipación como mínimo.\n\nSi es para hoy, escribinos directo y te confirmamos al toque si llegamos con los tiempos.",
+      c: [{ t: "Consultar disponibilidad", a: "wa", v: "Hola, ¿llegan a entregarme un pedido hoy?", s: "gold" }]
+    },
+    {
+      id: "retiro", w: 1.2,
+      p: ["retiro", "retirar", "paso a buscar", "take away", "para llevar",
+          "puedo pasar", "busco yo", "retiro en el local", "retirar en el local",
+          "paso yo", "lo busco", "pick up"],
+      a: "Claro. **Retirás en el local** y te ahorrás el costo de envío.\n\nSi querés que esté pronto cuando llegues, dejanos el pedido antes por WhatsApp con el horario aproximado y lo tenemos armado.",
+      c: [{ t: "Avisar mi retiro", a: "wa", v: "Hola, quiero dejar un pedido pronto para retirar. Horario aproximado:", s: "gold" },
+          { t: "Ver ubicación", a: "map" },
+          { t: "Horarios", a: "ask", v: "horarios" }]
+    },
+
+    /* ── El local ───────────────────────────────────────────────────── */
+    {
+      id: "horarios", w: 1.2,
+      p: ["horario", "horarios", "a que hora abren", "a que hora cierran", "abren",
+          "cierran", "estan abiertos", "hoy abren", "abren los domingos", "feriado",
+          "hasta que hora", "desde que hora", "estan abiertos ahora"],
+      a: "Los horarios **cambian según la temporada** — en verano estiramos bastante más que en invierno.\n\nPara no mandarte al pedo, te confirmamos el **horario de hoy** por WhatsApp o teléfono.",
+      c: [{ t: "Consultar horario de hoy", a: "wa", v: "Hola, ¿cuál es el horario de hoy?", s: "gold" },
+          { t: "Llamar", a: "tel" }]
+    },
+    {
+      id: "ubicacion", w: 1.2,
+      p: ["donde estan", "donde queda", "ubicacion", "direccion", "como llego",
+          "en que barrio", "donde esta el local", "sucursal", "sucursales", "tienen local",
+          "donde los encuentro", "mapa", "como llegar", "en que calle"],
+      a: "Estamos en **Montevideo, Uruguay**.\n\nAbrí el mapa para la ubicación exacta y el camino, o pedinos la referencia por WhatsApp si te queda más cómodo.",
+      c: [{ t: "Ver en el mapa", a: "map", s: "gold" },
+          { t: "Pedir la dirección", a: "wa", v: "Hola, ¿me pasan la dirección exacta del local?" },
+          { t: "Horarios", a: "ask", v: "horarios" }]
+    },
+    {
+      id: "historia",
+      p: ["historia", "quienes son", "sobre ustedes", "la heladeria", "los trovadores",
+          "desde cuando", "hace cuanto", "de donde son", "familia", "tradicion",
+          "por que se llaman asi"],
+      a: "**Los Trovadores** es una heladería artesanal uruguaya. De las que hacen el helado ahí nomás, en tandas chicas y con receta propia.\n\nLa idea fue siempre la misma: helado de verdad, con buena materia prima, y opciones para que **nadie se quede sin postre**. De ahí salieron las líneas sin azúcar, sin gluten, sin lactosa y vegana.\n\nY sí — el pingüino de galera soy yo.",
+      c: [{ t: "Ver sabores", a: "ask", v: "sabores" },
+          { t: "Instagram", a: "ig" }]
+    },
+    {
+      id: "estacionamiento",
+      p: ["estacionamiento", "donde estaciono", "parking", "puedo estacionar",
+          "hay lugar para el auto", "cochera"],
+      a: "Se estaciona en la calle, en la zona del local. En horas pico puede estar movido, así que si venís justo de tiempo, avisanos y te dejamos el pedido pronto para que sea un minuto.",
+      c: [{ t: "Ver ubicación", a: "map" },
+          { t: "Dejar pedido pronto", a: "wa", v: "Hola, quiero dejar un pedido pronto para pasar a retirar." }]
+    },
+
+    /* ── Pagos ──────────────────────────────────────────────────────── */
+    {
+      id: "pagos", w: 1.2,
+      q: "¿Qué medios de pago aceptan?",
+      p: ["medios de pago", "como pago", "aceptan tarjeta", "tarjeta", "debito",
+          "credito", "efectivo", "formas de pago", "puedo pagar con", "pago",
+          "mercado pago", "prex", "midinero", "itau", "santander", "oca", "visa",
+          "master", "aceptan", "cuotas"],
+      a: "Aceptamos:\n\n- **Efectivo**\n- **Débito y crédito** — Visa, Mastercard, OCA\n- **Transferencia bancaria**\n- **Apps** — Mercado Pago, Prex, Mi Dinero\n\nAlgunos medios tienen **descuentos según el día**. Si querés aprovechar uno puntual, consultanos antes de pagar.",
+      c: [{ t: "Consultar beneficios", a: "wa", v: "Hola, ¿qué descuentos hay hoy según el medio de pago?" },
+          { t: "Ver promociones", a: "ask", v: "promociones" }]
+    },
+    {
+      id: "factura",
+      p: ["factura", "rut", "boleta", "e factura", "facturacion", "comprobante",
+          "necesito factura", "iva", "empresa factura"],
+      a: "Sí, emitimos **factura con RUT** para compras de empresa o mayoristas.\n\nPasanos **razón social, RUT y domicilio fiscal** junto con el pedido y sale la e-factura sin problema.",
+      c: [{ t: "Enviar mis datos", a: "form", s: "gold" },
+          { t: "WhatsApp", a: "wa", v: "Hola, necesito factura con RUT. Mis datos son:" }]
+    },
+
+    /* ── Conservación ───────────────────────────────────────────────── */
+    {
+      id: "conservacion",
+      q: "¿Cuánto dura el helado en el freezer?",
+      p: ["cuanto dura", "conservar", "conservacion", "se derrite", "como lo transporto",
+          "aguanta", "cuanto aguanta", "freezer", "congelador", "hielo seco",
+          "lo puedo llevar de viaje", "temperatura", "se puede volver a congelar",
+          "cuanto tiempo dura el helado"],
+      a: "Para que te dure como el primer día:\n\n- En freezer a **-18 °C**, hasta **3 meses** cerrado\n- Una vez abierto, mejor consumirlo en **2 a 3 semanas**\n- **No lo vuelvas a congelar** si se ablandó mucho: se hace granuloso\n- Guardalo al **fondo del freezer**, nunca en la puerta\n- Sacalo **5 minutos antes** de servir, para el punto justo\n\nPara traslados largos te lo preparamos con **hielo seco**: aguanta varias horas.",
+      c: [{ t: "Pedir con hielo seco", a: "wa", v: "Hola, necesito trasladar helado varias horas. ¿Me lo preparan con hielo seco?" }]
+    },
+
+    /* ── Institucional ──────────────────────────────────────────────── */
+    {
+      id: "franquicia",
+      p: ["franquicia", "franquicias", "abrir un local", "invertir", "socio",
+          "quiero poner una heladeria", "modelo de negocio", "expansion"],
+      a: "Las consultas por **franquicias o alianzas comerciales** las maneja directamente la dirección.\n\nDejanos nombre, teléfono, ciudad de interés y una línea sobre tu experiencia, y te contactan desde el equipo comercial.",
+      c: [{ t: "Dejar mis datos", a: "form", s: "gold" }]
+    },
+    {
+      id: "trabajo",
+      p: ["trabajo", "empleo", "buscan gente", "cv", "curriculum", "vacante",
+          "estan tomando", "quiero trabajar", "puesto", "postularme", "rrhh"],
+      a: "Cuando abrimos búsquedas las publicamos en nuestras redes.\n\nIgual podés dejarnos tus datos acá y quedás en carpeta para la próxima vacante.",
+      c: [{ t: "Dejar mis datos", a: "form", s: "gold" },
+          { t: "Ver Instagram", a: "ig" }]
+    },
+    {
+      id: "reclamo", w: 1.3,
+      p: ["reclamo", "queja", "problema", "mal", "malo", "no me gusto", "estaba feo",
+          "llego derretido", "faltaba", "error en el pedido", "me equivocaron",
+          "devolucion", "reembolso", "quiero quejarme", "pesimo", "mala atencion"],
+      a: "Lamento que hayas tenido un mal momento con nosotros. Eso lo queremos resolver, no dejarlo pasar.\n\nContanos **qué pasó, qué día y con qué pedido**, y alguien del equipo te responde personalmente.",
+      c: [{ t: "Contar qué pasó", a: "form", s: "gold" },
+          { t: "Escribir por WhatsApp", a: "wa", v: "Hola, tuve un problema con un pedido y quería contarles:" }]
+    },
+    {
+      id: "redes",
+      p: ["instagram", "facebook", "redes", "redes sociales", "los sigo", "insta",
+          "tienen instagram", "tiktok", "pagina", "web"],
+      a: "Publicamos novedades, sabores nuevos y promociones en nuestras redes. Seguinos y no te perdés ninguna.",
+      c: [{ t: "Ir a Instagram", a: "ig", s: "gold" }]
+    },
+    {
+      id: "regalo",
+      p: ["regalo", "regalar", "gift card", "tarjeta de regalo", "para regalar",
+          "sorprender", "canasta", "obsequio"],
+      a: "Un helado siempre cae bien. Te armamos un **pack** con sabores a elección, paletas y algún postre, listo para entregar.\n\nSi querés que llegue a otra dirección con una dedicatoria, también lo coordinamos.",
+      c: [{ t: "Armar un regalo", a: "wa", v: "Hola, quiero armar un regalo con helados.", s: "gold" },
+          { t: "Dejar los detalles", a: "form" }]
+    },
+    {
+      id: "humano", w: 1.5,
+      p: ["hablar con una persona", "hablar con alguien", "atencion al cliente",
+          "operador", "humano", "persona real", "quiero hablar con alguien",
+          "pasame con alguien", "no me servis", "necesito ayuda de verdad",
+          "contactar", "contacto", "telefono", "numero de telefono", "whatsapp",
+          "como los contacto", "quiero que me llamen"],
+      a: "Dale, te paso con el equipo.\n\nElegí el canal que te quede cómodo. Si escribís fuera de horario, dejá tu mensaje y te respondemos apenas abrimos.",
+      c: [{ t: "WhatsApp", a: "wa", v: "Hola, quiero hacer una consulta.", s: "gold" },
+          { t: "Llamar al local", a: "tel" },
+          { t: "Dejar un mensaje", a: "form" }]
+    }
+  ];
+
+  /* Menú de bienvenida */
+  var MENU = [
+    { ic: "cone",   t: "Elegir sabores",        s: "Clásicos y novedades",              q: "que sabores tienen" },
+    { ic: "leaf",   t: "Opciones para mí",      s: "Sin azúcar · celíacos · veganas",   q: "sin azucar y sin gluten" },
+    { ic: "tag",    t: "Ver precios y promos",  s: "Potes, paletas y combos",            q: "precios" },
+    { ic: "truck",  t: "Hacer un pedido",       s: "Entrega o retiro",                   q: "como hago un pedido" }
+  ];
+
+  var QUICK = ["Sabores", "Sin azúcar", "Precios", "Delivery", "Horarios", "Hablar con alguien"];
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ⑧  MOTOR DE COMPRENSIÓN
+     Puntúa frases por encima de palabras, tolera errores de tipeo,
+     entiende plurales, descarta con palabras negativas, y si duda
+     entre dos temas pregunta en lugar de adivinar.
+     ═══════════════════════════════════════════════════════════════════════ */
+  var STOP = {};
+  ("de la el los las un una unos unas y o u que en a al del por para con sin " +
+   "me te se le lo su mi tu es son esta estan hay tienen tenes tiene tener " +
+   "quiero queria necesito saber decir favor porfa porfavor puedo pueden " +
+   "hacer hacen hace haces dar dan da ver mira busco ando " +
+   "venden vende vender sale salen cuesta cuestan vale valen " +
+   "mas muy pero si no como cual cuales cuanto cuanta cuantos cuantas " +
+   "cuando donde quien porque tambien ya eso esto ese este algo alguna algun " +
+   "yo vos usted ustedes nos nosotros ah eh oh").split(" ").forEach(function (w) { STOP[w] = 1; });
+
+  function norm(s) {
+    return String(s || "").toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9ñ\s]/g, " ").replace(/\s+/g, " ").trim();
+  }
+  function stem(w) {
+    if (w.length > 5 && /es$/.test(w)) return w.slice(0, -2);
+    if (w.length > 4 && /s$/.test(w)) return w.slice(0, -1);
+    return w;
+  }
+  function toks(s) { return norm(s).split(" ").filter(Boolean); }
+
+  function lev(a, b, max) {
+    if (a === b) return 0;
+    var la = a.length, lb = b.length;
+    if (Math.abs(la - lb) > max) return max + 1;
+    var prev = new Array(lb + 1), cur = new Array(lb + 1), i, j;
+    for (j = 0; j <= lb; j++) prev[j] = j;
+    for (i = 1; i <= la; i++) {
+      cur[0] = i; var best = cur[0];
+      for (j = 1; j <= lb; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1,
+                 prev[j - 1] + (a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1));
+        if (cur[j] < best) best = cur[j];
+      }
+      if (best > max) return max + 1;
+      var t = prev; prev = cur; cur = t;
+    }
+    return prev[lb];
+  }
+  function near(a, b) {
+    if (a === b) return true;
+    var sa = stem(a), sb = stem(b);
+    if (sa === sb) return true;
+    var len = Math.min(sa.length, sb.length);
+    if (len < 4) return false;
+    var max = len >= 8 ? 2 : 1;
+    return lev(sa, sb, max) <= max;
+  }
+  var pad = function (s) { return " " + s + " "; };
+
+  function score(intent, qn, qt) {
+    var padded = pad(qn), best = 0, i, k;
+    for (i = 0; i < intent.p.length; i++) {
+      var pn = norm(intent.p[i]); if (!pn) continue;
+      var pt = pn.split(" "), s = 0;
+      if (padded.indexOf(pad(pn)) !== -1) {
+        s = 2 + pt.length * 0.9;
+      } else {
+        var got = 0, total = 0, content = 0, gotContent = 0;
+        for (k = 0; k < pt.length; k++) {
+          var isStop = !!STOP[pt[k]], w = isStop ? 0.25 : 1;
+          total += w; if (!isStop) content++;
+          var hit = 0;
+          for (var q = 0; q < qt.length; q++) {
+            if (qt[q] === pt[k] || stem(qt[q]) === stem(pt[k])) { hit = 1; break; }
+            if (near(qt[q], pt[k])) hit = 0.68;
+          }
+          got += w * hit;
+          if (!isStop && hit) gotContent += hit;
+        }
+        if (!total) continue;
+        // Una frase hecha solo de muletillas ("como lo hacen") vale únicamente
+        // si aparece completa; si no, cualquier verbo suelto la dispararía.
+        if (!content) continue;
+        var cov = got / total; if (cov <= 0) continue;
+        // En frases largas exigimos cobertura real, no una palabra suelta.
+        if (pt.length >= 3 && (cov < 0.5 || gotContent < 1)) continue;
+        s = cov * (1 + pt.length * 0.55);
+        if (cov < 0.999 && pt.length > 1) s *= 0.7;
+      }
+      if (s > best) best = s;
+    }
+    if (!best) return 0;
+    best *= (intent.w || 1);
+    if (intent.not) {
+      for (i = 0; i < intent.not.length; i++) {
+        if (padded.indexOf(pad(norm(intent.not[i]))) !== -1) { best *= 0.15; break; }
+      }
+    }
+    return best;
+  }
+
+  var THRESHOLD = 0.95;
+  function classify(text) {
+    var qn = norm(text), qt = toks(text);
+    if (!qn) return { kind: "none", top: 0 };
+    var r = [];
+    for (var i = 0; i < KB.length; i++) {
+      var s = score(KB[i], qn, qt);
+      if (s > 0) r.push({ intent: KB[i], score: s });
+    }
+    r.sort(function (a, b) { return b.score - a.score; });
+    var top = r.length ? r[0].score : 0;
+    if (!r.length || top < THRESHOLD) return { kind: "unknown", top: top };
+    if (r[1] && r[1].score >= top * 0.88 && top < 2.6) {
+      return { kind: "ambiguous", options: [r[0].intent, r[1].intent], top: top };
+    }
+    return { kind: "match", intent: r[0].intent, top: top };
+  }
+
+  /* ¿Es un seguimiento elíptico del tema anterior ("¿y sin azúcar?")
+     o una pregunta nueva que solo resulta ser corta ("tienen wifi")?
+     Solo lo tratamos como seguimiento si arranca con un conector,
+     o si por sí sola ya insinuaba algo del tema anterior. */
+  var LINK = /^(y|e|o|pero|tambien|ademas|entonces|igual|con|en|de)\s/;
+  function isFollowUp(text, alone) {
+    if (toks(text).length > 4) return false;
+    return LINK.test(norm(text) + " ") || alone >= 0.45;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ⑨  UTILIDADES
+     ═══════════════════════════════════════════════════════════════════════ */
+  var C = TROVITO;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (m) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m];
+    });
+  }
+
+  /* Markdown liviano · **negrita** _nota_ `código` [link](url)
+     - viñeta · Clave | Valor (fila tabular) · --- (regla) */
+  function md(src) {
+    var lines = esc(src).split("\n"), out = [], ul = null;
+    function flushUL() { if (ul) { out.push("<ul>" + ul.join("") + "</ul>"); ul = null; } }
+    function inline(t) {
+      return t.replace(/`([^`]+)`/g, "<code>$1</code>")
+              .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+              .replace(/(^|[\s(])_([^_]+)_(?=[\s.,;:!?)]|$)/g, "$1<em>$2</em>")
+              .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
+                       '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    }
+    for (var i = 0; i < lines.length; i++) {
+      var l = lines[i];
+      if (/^\s*-\s+/.test(l)) { (ul = ul || []).push("<li>" + inline(l.replace(/^\s*-\s+/, "")) + "</li>"); continue; }
+      flushUL();
+      if (/^\s*---\s*$/.test(l)) { out.push('<hr class="rule">'); continue; }
+      var kv = l.match(/^([^|]{1,42})\s\|\s(.+)$/);
+      if (kv) { out.push('<div class="kv"><span>' + inline(kv[1].trim()) + "</span><b>" + inline(kv[2].trim()) + "</b></div>"); continue; }
+      if (!l.trim()) { out.push("<br>"); continue; }
+      out.push(inline(l));
+    }
+    flushUL();
+    return out.join("<br>")
+      .replace(/(<br>)?(<ul>|<div class="kv">|<hr class="rule">)/g, "$2")
+      .replace(/(<\/ul>|<\/div>|<hr class="rule">)(<br>)?/g, "$1");
+  }
+
+  function plain(src) {
+    return String(src).replace(/\*\*/g, "").replace(/^\s*---\s*$/gm, "")
+      .replace(/^\s*-\s+/gm, "• ").replace(/^([^|\n]{1,42})\s\|\s(.+)$/gm, "$1: $2")
+      .replace(/_/g, "").replace(/\n{2,}/g, " ").replace(/\n/g, " ").replace(/\s{2,}/g, " ").trim();
+  }
+
+  var dig = function (s) { return String(s || "").replace(/[^0-9]/g, ""); };
+  function wa(msg) { return "https://wa.me/" + dig(C.contact.whatsapp) + (msg ? "?text=" + encodeURIComponent(msg) : ""); }
+  function hhmm() { return new Date().toLocaleTimeString("es-UY", { hour: "2-digit", minute: "2-digit" }); }
+
+  var I = {
+    send:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h14M12.5 5.5 19 12l-6.5 6.5"/></svg>',
+    x:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>',
+    redo:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.4 2.6L3 8"/><path d="M3 3v5h5"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg>',
+    wa:    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.14 6.44 2.14 11.9c0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.74 1.2c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm5.8 14.06c-.24.68-1.42 1.32-1.96 1.36-.5.04-.98.22-3.32-.7-2.8-1.1-4.57-3.96-4.71-4.14-.14-.19-1.13-1.5-1.13-2.87s.72-2.03.97-2.31c.25-.28.55-.35.73-.35l.53.01c.17.01.4-.06.62.48.24.57.8 1.96.87 2.1.07.14.12.3.02.49-.1.19-.15.3-.29.47l-.43.49c-.14.14-.29.29-.12.57.16.28.73 1.21 1.57 1.96 1.08.96 1.99 1.26 2.27 1.4.28.14.44.12.6-.07.17-.19.7-.81.88-1.09.18-.28.37-.23.62-.14.25.09 1.6.75 1.87.89.28.14.46.21.53.32.07.12.07.68-.17 1.36Z"/></svg>',
+    tel:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 1.9.6 2.8a2 2 0 0 1-.4 2.1L8.1 9.8a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.8.6a2 2 0 0 1 1.8 2Z"/></svg>',
+    map:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+    ig:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>',
+    mail:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 7 9 6 9-6"/></svg>',
+    lock:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="11" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>',
+    up:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V10l5-8a2.5 2.5 0 0 1 2.4 3.2L13.5 9H19a2 2 0 0 1 2 2.4l-1.6 8A2 2 0 0 1 17.4 21H7Z"/></svg>',
+    down:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg)"><path d="M7 22V10l5-8a2.5 2.5 0 0 1 2.4 3.2L13.5 9H19a2 2 0 0 1 2 2.4l-1.6 8A2 2 0 0 1 17.4 21H7Z"/></svg>',
+    /* Iconos del menú, dibujados a medida para la marca */
+    cone:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7.4 10.2a4.6 4.6 0 0 1 9.2 0"/><path d="M6.6 10.2h10.8L12.6 21a.8.8 0 0 1-1.2 0Z"/><path d="m8.7 13.6 6.6 0M10 17l4 0"/></svg>',
+    leaf:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c0-8 5-14 16-15 0 10-5 15-12 15Z"/><path d="M4.5 19.5C8 16 11 13.5 15 11.5"/></svg>',
+    tag:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12.6 3H20a1 1 0 0 1 1 1v7.4a2 2 0 0 1-.6 1.4l-7.6 7.6a2 2 0 0 1-2.8 0l-6.4-6.4a2 2 0 0 1 0-2.8l7.6-7.6A2 2 0 0 1 12.6 3Z"/><circle cx="16.4" cy="7.6" r="1.4"/></svg>',
+    cake:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5h17M4.5 20.5v-6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v6"/><path d="M4.5 16.2c1.8 1.4 3.2 1.4 5 0s3.2-1.4 5 0 3.2 1.4 5 0"/><path d="M12 12.5V9M12 5.6V5"/></svg>',
+    truck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 10h3.6l3.4 3.2v3.3h-7z"/><circle cx="7" cy="18" r="1.9"/><circle cx="17" cy="18" r="1.9"/></svg>'
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ⑩  ESTRUCTURA
+     ═══════════════════════════════════════════════════════════════════════ */
+  var root = document.getElementById("trovito");
+  if (!root) return;
+
+  root.innerHTML =
+    DEFS +
+    '<div class="tv-scrim" id="tvScrim"></div>' +
+
+    '<div class="tv-nudge" id="tvNudge" data-show="false" aria-hidden="true">' +
+      '<button class="tv-nudge__x" id="tvNudgeX" aria-label="Cerrar aviso" tabindex="-1">&times;</button>' +
+      '<button class="tv-nudge__body" id="tvNudgeOpen" type="button" tabindex="-1">' + esc(C.behavior.nudgeText) + '</button>' +
+    "</div>" +
+
+    '<button class="tv-launcher" id="tvGo" data-open-label="false" aria-expanded="false" ' +
+            'aria-controls="tvPanel" aria-label="Abrir el chat con ' + esc(C.brand.name) + '">' +
+      '<span class="tv-launcher__mark dt-tip" id="tvGoMark">' + medallion(false) + "</span>" +
+      '<span class="tv-launcher__txt">' +
+        '<span class="tv-launcher__t1">' + esc(C.brand.name) + "</span>" +
+        '<span class="tv-launcher__t2">Consultas, sabores y pedidos</span>' +
+      "</span>" +
+      '<span class="tv-launcher__dot"></span>' +
+    "</button>" +
+
+    '<section class="tv-panel" id="tvPanel" role="dialog" aria-modal="false" ' +
+             'aria-label="Chat con ' + esc(C.brand.name) + '">' +
+      '<span class="tv-grip" id="tvGrip" aria-hidden="true"></span>' +
+      '<header class="tv-head" id="tvHead">' +
+        '<span class="tv-head__mark dt-tip" id="tvHeadMark">' + medallion(false) + "</span>" +
+        '<span class="tv-head__meta">' +
+          '<span class="tv-head__name">' + esc(C.brand.name) + "</span>" +
+          '<span class="tv-head__role"><i class="tv-live"></i>' + esc(C.brand.role) + "</span>" +
+        "</span>" +
+        '<button class="tv-ico" id="tvReset" aria-label="Empezar la conversación de nuevo" title="Empezar de nuevo">' + I.redo + '<span class="tv-ico__confirm">Confirmar</span></button>' +
+        '<button class="tv-ico" id="tvX" aria-label="Cerrar el chat">' + I.x + "</button>" +
+      "</header>" +
+      '<div class="tv-body" id="tvBody" role="log" aria-live="polite" aria-relevant="additions"></div>' +
+      '<div class="tv-comp" id="tvComp" data-welcome="true">' +
+        '<div class="tv-sug-wrap"><span class="tv-sug-label">También podés preguntar por</span>' +
+          '<div class="tv-sug" id="tvSug" aria-label="Consultas frecuentes"></div></div>' +
+        '<div class="tv-row">' +
+          '<label class="sr" for="tvIn">Escribí tu consulta</label>' +
+          '<textarea class="tv-in" id="tvIn" rows="1" placeholder="Escribí tu pregunta…" autocomplete="off" enterkeyhint="send" maxlength="600"></textarea>' +
+          '<button class="tv-go" id="tvSend" aria-label="Enviar consulta" disabled>' + I.send + "</button>" +
+        "</div>" +
+        '<div class="tv-foot">' + I.lock + '<span><span class="tv-foot__desktop">Enter para enviar · </span>Asistente virtual con ayuda humana</span></div>' +
+      "</div>" +
+    "</section>";
+
+  var $ = function (id) { return document.getElementById(id); };
+  var panel = $("tvPanel"), body = $("tvBody"), input = $("tvIn"), comp = $("tvComp"),
+      send = $("tvSend"), go = $("tvGo"), nudge = $("tvNudge"), scrim = $("tvScrim");
+
+  var S = { open: false, msgs: [], miss: 0, last: "", ctx: "", ctxId: "", form: false };
+  var KEY = "trovito.v2";
+
+  function setNudge(show) {
+    nudge.setAttribute("data-show", show ? "true" : "false");
+    nudge.setAttribute("aria-hidden", show ? "false" : "true");
+    $("tvNudgeX").tabIndex = show ? 0 : -1;
+    $("tvNudgeOpen").tabIndex = show ? 0 : -1;
+  }
+
+  function save() {
+    if (!C.behavior.persist) return;
+    try { sessionStorage.setItem(KEY, JSON.stringify({ msgs: S.msgs })); } catch (e) {}
+  }
+  function load() {
+    if (!C.behavior.persist) return null;
+    try { return JSON.parse(sessionStorage.getItem(KEY) || "null"); } catch (e) { return null; }
+  }
+  function down(smooth) {
+    requestAnimationFrame(function () {
+      try {
+        if (typeof body.scrollTo === "function") body.scrollTo({ top: body.scrollHeight, behavior: smooth === false ? "auto" : "smooth" });
+        else body.scrollTop = body.scrollHeight;
+      } catch (e) { body.scrollTop = body.scrollHeight; }
+    });
+  }
+
+  /* ── Chips ──────────────────────────────────────────────────────── */
+  function chip(c) {
+    var v = c.s ? ' data-v="' + c.s + '"' : "", L = esc(c.t);
+    if (c.a === "wa")  return '<a class="tv-c"' + v + ' href="' + esc(wa(c.v || "")) + '" target="_blank" rel="noopener noreferrer">' + I.wa + L + "</a>";
+    if (c.a === "tel") return C.contact.phone ? '<a class="tv-c"' + v + ' href="tel:' + esc(C.contact.phone.replace(/[^0-9+]/g, "")) + '">' + I.tel + L + "</a>" : "";
+    if (c.a === "map") return C.contact.mapsUrl ? '<a class="tv-c"' + v + ' href="' + esc(C.contact.mapsUrl) + '" target="_blank" rel="noopener noreferrer">' + I.map + L + "</a>" : "";
+    if (c.a === "ig")  return C.contact.instagram ? '<a class="tv-c"' + v + ' href="' + esc(C.contact.instagram) + '" target="_blank" rel="noopener noreferrer">' + I.ig + L + "</a>" : "";
+    if (c.a === "form") return '<button class="tv-c"' + v + ' data-do="form">' + I.mail + L + "</button>";
+    return '<button class="tv-c"' + v + ' data-do="ask" data-q="' + esc(c.v || c.t) + '">' + L + "</button>";
+  }
+
+  function node(m, prev) {
+    var el = document.createElement("div");
+    el.className = "tv-m";
+    el.setAttribute("data-f", m.f);
+    el.setAttribute("data-tail", String(prev !== m.f));
+    var cs = (m.c || []).map(chip).filter(Boolean).join("");
+    el.innerHTML =
+      '<span class="tv-m__av">' + (m.f === "bot" ? medallionRef() : "") + "</span>" +
+      '<div class="tv-m__c">' +
+        '<div class="tv-b">' + (m.f === "bot" ? md(m.t) : esc(m.t)) + "</div>" +
+        (cs ? '<div class="tv-chips">' + cs + "</div>" : "") +
+        (m.fb ? '<div class="tv-fb"><span>¿Te sirvió?</span>' +
+                '<button data-fb="up" aria-label="Sí, me sirvió">' + I.up + "</button>" +
+                '<button data-fb="down" aria-label="No me sirvió">' + I.down + "</button></div>" : "") +
+        '<div class="tv-t">' + esc(m.h || hhmm()) + "</div>" +
+      "</div>";
+    return el;
+  }
+
+  function push(m) {
+    var prev = S.msgs[S.msgs.length - 1];
+    m.h = m.h || hhmm();
+    S.msgs.push(m);
+    hideHero();
+    body.appendChild(node(m, prev && prev.f));
+    down(); save();
+    if (!S.open && m.f === "bot") go.setAttribute("data-unread", "true");
+  }
+
+  var typ = null;
+  function typing(on) {
+    if (on) {
+      if (typ) return;
+      body.setAttribute("aria-busy", "true");
+      typ = document.createElement("div");
+      typ.className = "tv-m"; typ.setAttribute("data-f", "bot");
+      typ.innerHTML = '<span class="tv-m__av">' + medallionRef() + "</span>" +
+                      '<div class="tv-m__c"><div class="tv-typ"><i></i><i></i><i></i></div></div>';
+      body.appendChild(typ); down();
+    } else if (typ) { typ.remove(); typ = null; body.setAttribute("aria-busy", "false"); }
+  }
+
+  /* ── Bienvenida ─────────────────────────────────────────────────── */
+  var hero = null;
+  function showHero() {
+    if (hero) return;
+    comp.setAttribute("data-welcome", "true");
+    hero = document.createElement("div");
+    hero.className = "tv-hero";
+    hero.innerHTML =
+      '<div class="tv-hero__rule">Disponible ahora</div>' +
+      '<h2 class="tv-hero__h">Hola, ¿cómo te puedo ayudar?</h2>' +
+      '<p class="tv-hero__p">Elegí un tema o escribí tu pregunta. Si hace falta, te conecto con el equipo.</p>' +
+      '<div class="tv-menu__label">Temas frecuentes</div>' +
+      '<div class="tv-menu">' +
+        MENU.map(function (m) {
+          return '<button class="tv-item" data-do="ask" data-q="' + esc(m.q) + '">' +
+                   '<span class="tv-item__ic">' + I[m.ic] + "</span>" +
+                   '<span class="tv-item__l">' + esc(m.t) + '<span class="tv-item__s">' + esc(m.s) + "</span></span>" +
+                   '<span class="tv-item__a">' + I.arrow + "</span>" +
+                 "</button>";
+        }).join("") +
+      "</div>";
+    body.appendChild(hero);
+  }
+  function hideHero() {
+    comp.setAttribute("data-welcome", "false");
+    if (hero) { hero.remove(); hero = null; }
+  }
+
+  /* ── Formulario ─────────────────────────────────────────────────── */
+  function openForm(prefill, title) {
+    if (S.form) return;
+    S.form = true; hideHero();
+    var f = document.createElement("form");
+    f.className = "tv-form"; f.setAttribute("novalidate", "novalidate");
+    f.innerHTML =
+      '<div class="tv-form__t">' + esc(title || "Dejanos tu mensaje") + "</div>" +
+      '<div class="tv-form__s">Te respondemos por correo apenas lo vemos. Suele ser el mismo día.</div>' +
+      '<div class="tv-f" data-err="false"><label for="fN">Nombre</label>' +
+        '<input id="fN" type="text" autocomplete="name" placeholder="Tu nombre" required aria-describedby="fNErr">' +
+        '<div class="tv-f__e" id="fNErr">Escribí tu nombre.</div></div>' +
+      '<div class="tv-f" data-err="false"><label for="fE">Email</label>' +
+        '<input id="fE" type="email" autocomplete="email" inputmode="email" placeholder="tucorreo@ejemplo.com" required aria-describedby="fEErr">' +
+        '<div class="tv-f__e" id="fEErr">Revisá el email, no parece válido.</div></div>' +
+      '<div class="tv-f" data-err="false"><label for="fT">Teléfono <span>(opcional)</span></label>' +
+        '<input id="fT" type="tel" autocomplete="tel" inputmode="tel" placeholder="099 000 000"></div>' +
+      '<div class="tv-f" data-err="false"><label for="fM">Tu consulta</label>' +
+        '<textarea id="fM" placeholder="Contanos qué necesitás…" required aria-describedby="fMErr">' + esc(prefill || "") + "</textarea>" +
+        '<div class="tv-f__e" id="fMErr">Contanos brevemente qué necesitás.</div></div>' +
+      '<div class="tv-form__row">' +
+        '<button class="tv-btn" data-v="p" type="submit"><span class="tv-spin"></span><span class="tv-btn__t">Enviar consulta</span></button>' +
+        '<button class="tv-btn" data-v="g" type="button" data-cancel>Cancelar</button>' +
+      "</div>" +
+      '<div class="tv-form__a" data-show="false"></div>' +
+      '<div class="tv-form__n">Usamos tus datos únicamente para responder esta consulta.</div>';
+    body.appendChild(f); down();
+    setTimeout(function () { try { f.querySelector("#fN").focus(); } catch (e) {} }, 260);
+
+    f.querySelector("[data-cancel]").addEventListener("click", function () {
+      S.form = false; f.remove();
+      push({ f: "bot", t: "Sin problema. Si preferís, escribinos directo por WhatsApp y te respondemos ahí.",
+             c: [{ t: "Ir a WhatsApp", a: "wa", v: "Hola, quiero hacer una consulta.", s: "gold" }] });
+    });
+
+    f.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var n = f.querySelector("#fN"), e = f.querySelector("#fE"),
+          t = f.querySelector("#fT"), m = f.querySelector("#fM"), ok = true;
+      function mark(el, bad) {
+        el.closest(".tv-f").setAttribute("data-err", bad ? "true" : "false");
+        el.setAttribute("aria-invalid", bad ? "true" : "false");
+        if (bad) ok = false;
+      }
+      mark(n, n.value.trim().length < 2);
+      mark(e, !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e.value.trim()));
+      mark(m, m.value.trim().length < 5);
+      if (!ok) { try { f.querySelector('[data-err="true"] input, [data-err="true"] textarea').focus(); } catch (x) {} return; }
+
+      var btn = f.querySelector('[data-v="p"]'), al = f.querySelector(".tv-form__a");
+      btn.setAttribute("data-loading", "true"); btn.setAttribute("disabled", "disabled");
+      btn.querySelector(".tv-btn__t").textContent = "Enviando…";
+      al.setAttribute("data-show", "false");
+
+      var log = S.msgs.slice(-8).map(function (x) {
+        return (x.f === "bot" ? C.brand.name + ": " : "Cliente: ") + plain(x.t);
+      }).join("\n");
+
+      post({ name: n.value.trim(), email: e.value.trim(), phone: t.value.trim(), message: m.value.trim(), log: log })
+        .then(function () {
+          S.form = false; f.remove(); S.miss = 0;
+          push({ f: "bot",
+                 t: "Listo, " + esc(n.value.trim().split(" ")[0]) + ". Tu consulta ya está en nuestro correo.\n\nTe respondemos a **" + esc(e.value.trim()) + "** apenas la vemos. Si es urgente, WhatsApp va más rápido.",
+                 c: [{ t: "Escribir por WhatsApp", a: "wa", v: "Hola, les dejé una consulta por la web." },
+                     { t: "Seguir preguntando", a: "ask", v: "que podes hacer" }] });
+        })
+        .catch(function (err) {
+          btn.removeAttribute("data-loading"); btn.removeAttribute("disabled");
+          btn.querySelector(".tv-btn__t").textContent = "Enviar consulta";
+          var link = wa("Hola, les dejo una consulta desde la web:\n\nNombre: " + n.value.trim() +
+                        "\nEmail: " + e.value.trim() + (t.value.trim() ? "\nTeléfono: " + t.value.trim() : "") +
+                        "\n\n" + m.value.trim());
+          al.innerHTML = (err && err.noConfig
+              ? "El envío por correo todavía no está configurado en el sitio. "
+              : "No pudimos enviar el mensaje en este momento. ") +
+            'Mandanoslo por <a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a> y lo recibimos igual.';
+          al.setAttribute("data-show", "true"); down();
+        });
+    });
+  }
+
+  function post(d) {
+    var cfg = C.form;
+    var p = {
+      subject: cfg.subject || "Consulta desde la web",
+      name: d.name, email: d.email, phone: d.phone || "—",
+      message: d.message, conversacion: d.log,
+      origen: (typeof location !== "undefined" ? location.href : "web")
+    };
+    if (cfg.web3formsKey) {
+      p.access_key = cfg.web3formsKey; p.from_name = C.brand.name + " · " + C.brand.house;
+      return fetch("https://api.web3forms.com/submit", {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(p)
+      }).then(function (r) { return r.json(); })
+        .then(function (j) { if (!j || !j.success) throw new Error("web3forms"); return j; });
+    }
+    if (cfg.formspreeUrl) {
+      return fetch(cfg.formspreeUrl, {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(p)
+      }).then(function (r) { if (!r.ok) throw new Error("formspree"); return r.json().catch(function () { return {}; }); });
+    }
+    return Promise.reject({ noConfig: true });
+  }
+
+  /* ── Conversación ───────────────────────────────────────────────── */
+  var NAME = {
+    sabores: "Sabores", sabores_chocolate: "Chocolates", sabores_frutales: "Frutales",
+    sabores_dulce_leche: "Dulce de leche", sabores_nuevos: "Novedades", sin_azucar: "Sin azúcar",
+    sin_gluten: "Sin gluten", sin_lactosa: "Sin lactosa", vegano: "Veganos", alergenos: "Alérgenos",
+    ingredientes: "Ingredientes", nutricional: "Info nutricional", precios: "Precios",
+    precios_paletas: "Paletas", promos: "Promociones", postres: "Postres", tortas: "Tortas a pedido",
+    cassatta: "Cassatta", alfajores: "Alfajores", eventos: "Eventos", cantidad: "Cuánto comprar",
+    mayorista: "Venta mayorista", delivery: "Entregas", pedido_como: "Hacer un pedido",
+    zonas: "Zonas", costo_envio: "Costo de envío", tiempo_entrega: "Tiempos",
+    retiro: "Retiro en el local", horarios: "Horarios", ubicacion: "Ubicación",
+    historia: "Sobre la casa", estacionamiento: "Estacionamiento", pagos: "Medios de pago",
+    factura: "Factura con RUT", conservacion: "Conservación", franquicia: "Franquicias",
+    trabajo: "Trabajo", reclamo: "Reclamos", redes: "Redes", regalo: "Regalos", humano: "Hablar con alguien"
+  };
+  function nameOf(i) { return NAME[i.id] || i.id.replace(/_/g, " "); }
+
+  function reply(text) {
+    var r = classify(text);
+
+    // Seguimiento del tema anterior: "¿y sin azúcar?", "¿y para celíacos?"
+    if (r.kind !== "match" && S.ctx && isFollowUp(text, r.top)) {
+      var combo = classify(S.ctx + " " + text);
+      if (combo.kind === "match" && combo.intent.id !== S.ctxId) r = combo;
+    }
+    S.last = text;
+
+    if (r.kind === "match") {
+      S.miss = 0;
+      S.ctx = text; S.ctxId = r.intent.id;
+      push({ f: "bot", t: r.intent.a, c: r.intent.c || [], fb: true });
+      return;
+    }
+    if (r.kind === "ambiguous") {
+      push({ f: "bot", t: "Puedo contestarte eso, pero prefiero no pifiarle. ¿A cuál te referís?",
+             c: r.options.map(function (i) { return { t: nameOf(i), a: "ask", v: i.p[0] }; })
+                  .concat([{ t: "Ninguna de las dos", a: "form" }]) });
+      return;
+    }
+    S.miss++;
+    if (S.miss >= (C.behavior.escalateAfter || 2)) {
+      push({ f: "bot", t: "Esa no me la sé, y prefiero no inventarte una respuesta.\n\nTe la paso a una persona del equipo: completá esto y te contestan por correo." });
+      setTimeout(function () { openForm(text, "Dejale tu consulta al equipo"); }, 440);
+      return;
+    }
+    push({
+      f: "bot",
+      t: "Esa no la tengo. Sí manejo bien:\n\n- **Sabores** y líneas sin azúcar, sin gluten y veganas\n- **Precios**, promociones y encargos\n- **Entregas**, horarios y medios de pago\n\nProbá reformulándola, o dejame tu mensaje y te responde una persona.",
+      c: [{ t: "Ver sabores", a: "ask", v: "sabores" },
+          { t: "Precios", a: "ask", v: "precios" },
+          { t: "Entregas", a: "ask", v: "delivery" },
+          { t: "Dejar un mensaje", a: "form", s: "gold" }]
+    });
+  }
+
+  function ask(text) {
+    text = String(text || "").trim(); if (!text) return;
+    push({ f: "user", t: text });
+    input.value = ""; resize(); send.disabled = true;
+    typing(true);
+    setTimeout(function () { typing(false); reply(text); }, 380 + Math.min(700, text.length * 12));
+  }
+
+  /* ── Eventos ────────────────────────────────────────────────────── */
+  function resize() { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 112) + "px"; }
+  input.addEventListener("input", function () { send.disabled = !input.value.trim(); resize(); });
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (input.value.trim()) ask(input.value); }
+  });
+  send.addEventListener("click", function () { if (input.value.trim()) ask(input.value); });
+
+  root.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-do]");
+    if (t) {
+      var a = t.getAttribute("data-do");
+      if (a === "ask") { ask(t.getAttribute("data-q")); return; }
+      if (a === "form") { openForm(S.last && !NAME[S.last] ? S.last : "", "Dejanos tu mensaje"); return; }
+    }
+    var b = e.target.closest(".tv-fb button");
+    if (b) {
+      var w = b.parentElement;
+      if (w.getAttribute("data-done") === "true") return;
+      w.setAttribute("data-done", "true"); b.setAttribute("data-on", "true");
+      var pos = b.getAttribute("data-fb") === "up";
+      w.querySelector("span").textContent = pos ? "Gracias." : "Gracias, lo anotamos.";
+      try { window.dispatchEvent(new CustomEvent("trovito:feedback", { detail: { useful: pos } })); } catch (x) {}
+      if (!pos) setTimeout(function () {
+        push({ f: "bot", t: "Perdón, no te resolví. ¿Querés que te pase con una persona del equipo?",
+               c: [{ t: "Sí, dejar mi mensaje", a: "form", s: "gold" },
+                   { t: "Escribir por WhatsApp", a: "wa", v: "Hola, quiero hacer una consulta." }] });
+      }, 400);
+    }
+  });
+
+  /* ── Abrir / cerrar ─────────────────────────────────────────────── */
+  var narrow = function () { return !window.matchMedia || window.matchMedia("(max-width: 520px)").matches; };
+  var lastFocus = null, savedOverflow = "";
+
+  function greet() {
+    ["tvGoMark", "tvHeadMark"].forEach(function (id) {
+      var el = $(id); if (!el) return;
+      el.setAttribute("data-greet", "true");
+      setTimeout(function () { el.removeAttribute("data-greet"); }, 900);
+    });
+  }
+
+  function open() {
+    if (S.open) return;
+    S.open = true; lastFocus = document.activeElement;
+    root.setAttribute("data-open", "true");
+    panel.setAttribute("aria-modal", narrow() ? "true" : "false");
+    go.setAttribute("aria-expanded", "true"); go.removeAttribute("data-unread"); go.tabIndex = -1;
+    setNudge(false);
+    if (!S.msgs.length) showHero();
+    if (narrow()) { savedOverflow = document.body.style.overflow; document.body.style.overflow = "hidden"; }
+    down(false); greet();
+    if (!narrow()) setTimeout(function () { try { input.focus(); } catch (e) {} }, 280);
+    notifyHost("open");
+    try { window.dispatchEvent(new CustomEvent("trovito:open")); } catch (e) {}
+  }
+  function close() {
+    if (!S.open) return;
+    S.open = false;
+    root.setAttribute("data-open", "false");
+    panel.setAttribute("aria-modal", "false");
+    go.setAttribute("aria-expanded", "false"); go.tabIndex = 0;
+    document.body.style.overflow = savedOverflow;
+    notifyHost("closed");
+    try { (lastFocus && lastFocus.focus ? lastFocus : go).focus(); } catch (e) { }
+  }
+
+  go.addEventListener("click", open);
+  $("tvX").addEventListener("click", close);
+  scrim.addEventListener("click", close);
+  $("tvNudgeOpen").addEventListener("click", open);
+  $("tvNudgeX").addEventListener("click", function (e) {
+    e.stopPropagation(); setNudge(false);
+    try { sessionStorage.setItem("trovito.nudge", "1"); } catch (x) {}
+  });
+  var resetTimer = null;
+  $("tvReset").addEventListener("click", function () {
+    var reset = $("tvReset");
+    if (reset.getAttribute("data-confirm") !== "true") {
+      reset.setAttribute("data-confirm", "true");
+      reset.setAttribute("aria-label", "Confirmar: borrar la conversación y empezar de nuevo");
+      reset.title = "Volvé a tocar para confirmar";
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(function () {
+        reset.removeAttribute("data-confirm");
+        reset.setAttribute("aria-label", "Empezar la conversación de nuevo");
+        reset.title = "Empezar de nuevo";
+      }, 3200);
+      return;
+    }
+    clearTimeout(resetTimer);
+    reset.removeAttribute("data-confirm");
+    reset.setAttribute("aria-label", "Empezar la conversación de nuevo");
+    reset.title = "Empezar de nuevo";
+    S.msgs = []; S.miss = 0; S.last = ""; S.ctx = ""; S.ctxId = ""; S.form = false;
+    body.innerHTML = ""; hero = null; typ = null;
+    showHero(); save(); greet();
+  });
+
+  /* Escape cierra · Tab queda atrapado dentro del panel */
+  document.addEventListener("keydown", function (e) {
+    if (!S.open) return;
+    if (e.key === "Escape") { close(); return; }
+    if (e.key !== "Tab") return;
+    var f = panel.querySelectorAll('button:not([disabled]), a[href], input, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* Gesto de arrastre para cerrar en móvil */
+  (function () {
+    var y0 = null, dy = 0, head = $("tvHead");
+    head.addEventListener("touchstart", function (e) {
+      if (!narrow()) return; y0 = e.touches[0].clientY; dy = 0;
+      panel.style.transition = "none";
+    }, { passive: true });
+    head.addEventListener("touchmove", function (e) {
+      if (y0 === null) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      panel.style.transform = "translateY(" + dy + "px)";
+    }, { passive: true });
+    head.addEventListener("touchend", function () {
+      if (y0 === null) return;
+      panel.style.transition = ""; panel.style.transform = "";
+      if (dy > 110) close();
+      y0 = null;
+    });
+  })();
+
+  $("tvSug").innerHTML = QUICK.map(function (q) {
+    return '<button class="tv-c" data-do="ask" data-q="' + esc(q) + '">' + esc(q) + "</button>";
+  }).join("");
+
+  /* ── SEO · JSON-LD FAQPage generado desde la base de conocimiento ── */
+  if (C.behavior.seoFaq) {
+    try {
+      var faq = KB.filter(function (i) { return i.q; }).map(function (i) {
+        return { "@type": "Question", name: i.q,
+                 acceptedAnswer: { "@type": "Answer", text: plain(i.a) } };
+      });
+      if (faq.length) {
+        var ld = document.createElement("script");
+        ld.type = "application/ld+json";
+        ld.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq });
+        document.head.appendChild(ld);
+      }
+    } catch (e) {}
+  }
+
+  /* ── Arranque ───────────────────────────────────────────────────── */
+  var saved = load();
+  if (saved && saved.msgs && saved.msgs.length) {
+    S.msgs = saved.msgs;
+    comp.setAttribute("data-welcome", "false");
+    var pf = null;
+    S.msgs.forEach(function (m) { body.appendChild(node(m, pf)); pf = m.f; });
+    down(false);
+  } else showHero();
+
+  var seen = false;
+  try { seen = sessionStorage.getItem("trovito.nudge") === "1"; } catch (e) {}
+
+  setTimeout(function () {
+    if (S.open) return;
+    go.setAttribute("data-open-label", "true");
+    greet();
+    setTimeout(function () { go.setAttribute("data-open-label", "false"); }, 4600);
+  }, 1600);
+
+  if (C.behavior.nudgeDelay > 0 && !seen) {
+    setTimeout(function () { if (!S.open) setNudge(true); }, C.behavior.nudgeDelay);
+  }
+
+  /* ── API pública ────────────────────────────────────────────────── */
+  window.Trovito = {
+    open: open, close: close,
+    ask: function (q) { open(); setTimeout(function () { ask(q); }, 340); },
+    config: C
+  };
+  notifyHost("ready");
+})();
+</script>
+</body>
+</html>
